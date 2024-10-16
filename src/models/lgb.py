@@ -6,19 +6,19 @@ from sklearn.metrics import mean_absolute_error
 from src.utils.variables import RANDOM_SEED
 
 
-def optimize_lgb(X_train: DataFrame, y_train: DataFrame, X_holdout: DataFrame, y_holdout: DataFrame) -> dict:
+def optimize_lgb(X_train: DataFrame, y_train: DataFrame, X_holdout: DataFrame, y_holdout: DataFrame, n_trials=100) -> dict:
 	"""
 	Optimize LightGBM hyperparameters using Optuna
 	:param X_train: (DataFrame) Feature data for training
 	:param y_train: (DataFrame) Target data for training
 	:param X_holdout: (DataFrame) Feature data for holdout
 	:param y_holdout: (DataFrame) Target data for holdout
+	:param n_trials: (int) Number of trials, default=100
 	:return: (dict) Best hyperparameters
 	"""
 	study = optuna.create_study(direction='minimize')
-	study.optimize(lambda trial: objective(trial, X_train, y_train, X_holdout, y_holdout))
+	study.optimize(lambda trial: objective(trial, X_train, y_train, X_holdout, y_holdout), n_trials=n_trials)
 
-	print(f'Best MAE: {study.best_value}')
 	print(f'Best trial: {study.best_trial.value}')
 	print(f'Best params: {study.best_params}')
 

@@ -11,8 +11,10 @@ def data_preprocessing(train_data, test_data, interest_rate, subway_info, school
 
 	train_data = remove_duplicates(train_data)
 	test_data = remove_duplicates(test_data)
-	submission = test_data[['index']].copy()
+	submission = test_data.copy()
 	submission['deposit'] = 0
+	submission = submission['deposit']
+
 	#  Merge interest rate data
 	train_data = pd.merge(train_data, interest_rate, left_on='contract_year_month', right_on='year_month', how='left')
 	train_data.drop(columns=['year_month'], inplace=True)

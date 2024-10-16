@@ -15,9 +15,9 @@ def main():
 		train_data, test_data, submission, interest_rate, subway_info, school_info, park_info = load_preprocessed_data()
 	except FileNotFoundError:
 		try:
-			train_data, test_data, sample_submission, interest_rate, subway_info, school_info, park_info = load_raw_data()
-			train_data, test_data, submission = data_preprocessing(train_data, test_data, sample_submission,
-																   interest_rate, subway_info, school_info, park_info)
+			train_data, test_data, interest_rate, subway_info, school_info, park_info = load_raw_data()
+			train_data, test_data, submission, interest_rate, subway_info, school_info, park_info = data_preprocessing(
+				train_data, test_data, interest_rate, subway_info, school_info, park_info)
 		except FileNotFoundError:
 			print("==============================")
 			print('Data not found. Downloading...')
@@ -25,9 +25,9 @@ def main():
 			download_data()
 			extract_data()
 
-			train_data, test_data, sample_submission, interest_rate, subway_info, school_info, park_info = load_raw_data()
-			train_data, test_data, submission = data_preprocessing(train_data, test_data, sample_submission,
-																   interest_rate, subway_info, school_info, park_info)
+			train_data, test_data, interest_rate, subway_info, school_info, park_info = load_raw_data()
+			train_data, test_data, submission, interest_rate, subway_info, school_info, park_info = data_preprocessing(
+				train_data, test_data, interest_rate, subway_info, school_info, park_info)
 
 	train_data, test_data = feature_engineering(train_data, test_data, interest_rate, subway_info, school_info, park_info)
 

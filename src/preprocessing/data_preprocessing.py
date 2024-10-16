@@ -4,10 +4,14 @@ from src.preprocessing.remove_data import remove_duplicates, latlng_boundary_fil
 from src.preprocessing.split_data import split_year_month
 
 
-def data_preprocessing(train_data, test_data, sample_submission, interest_rate, subway_info, school_info, park_info):
+def data_preprocessing(train_data, test_data, interest_rate, subway_info, school_info, park_info):
 	print("==============================")
 	print('Data Preprocessing')
 	print("==============================")
+
+	submission = test_data[['index']].copy()
+	submission['deposit'] = 0
+
 	train_data = remove_duplicates(train_data)
 	test_data = remove_duplicates(test_data)
 
@@ -29,10 +33,8 @@ def data_preprocessing(train_data, test_data, sample_submission, interest_rate, 
 	print('Data Preprocessed')
 	print("==============================")
 
-	submission = test_data['deposit'].copy()
-
 	train_data.to_csv('./data/preprocessed/train.csv', index=False)
 	test_data.to_csv('./data/preprocessed/test.csv', index=False)
-	sample_submission.to_csv('./data/preprocessed/sample_submission.csv', index=False)
+	submission.to_csv('./data/preprocessed/submission.csv', index=False)
 
-	return train_data, test_data, sample_submission
+	return train_data, test_data, submission, interest_rate, subway_info, school_info, park_info

@@ -12,10 +12,10 @@ def get_holdout_data(train_data: DataFrame) -> (DataFrame, DataFrame):
 	print('Get Holdout Data')
 	print(f"Holdout period: {HOLDOUT_START} ~ {HOLDOUT_END}")
 	holdout_data = train_data[
-		(train_data['year'] + train_data['month'] >= HOLDOUT_START) & (
-					train_data['year'] + train_data['month'] <= HOLDOUT_END)]
+		(train_data['year'] * 100 + train_data['month'] >= HOLDOUT_START) & (
+					train_data['year'] * 100 + train_data['month'] <= HOLDOUT_END)]
 	train_data = train_data[
-		~((train_data['year'] + train_data['month'] >= HOLDOUT_START) & (
-					train_data['year'] + train_data['month'] <= HOLDOUT_END))]
+		~((train_data['year'] * 100 + train_data['month'] >= HOLDOUT_START) & (
+					train_data['year'] * 100 + train_data['month'] <= HOLDOUT_END))]
 
 	return holdout_data, train_data

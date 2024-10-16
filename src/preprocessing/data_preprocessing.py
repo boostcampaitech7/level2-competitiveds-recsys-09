@@ -13,4 +13,4 @@ def data_preprocessing(train_data, test_data, interest_rate, subway_info, school
 	school_info = latlng_boundary_filter(school_info)
 	park_info = latlng_boundary_filter(park_info)
 
-	return train_data, test_data, interest_rate, subway_info, school_info, park_info
+	return train_data, test_data

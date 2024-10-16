@@ -1,5 +1,5 @@
 # raw data
-/data/raw
+/data/raw/*.csv
 
 # baseline code
 /notebooks/baseline.ipynb

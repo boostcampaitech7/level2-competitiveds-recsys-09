@@ -1,5 +1,5 @@
 import numpy as np
-from src.data.data_loader import download_data, extract_data, load_raw_data
+from src.data.data_loader import download_data, extract_data, load_raw_data, load_preprocessed_data
 from src.evaluation.holdout import get_holdout_data
 from src.features.feature_engineering import feature_engineering
 from src.models.train_model import train_model
@@ -12,17 +12,21 @@ np.random.seed(RANDOM_SEED)
 
 def main():
 	try:
-		train_data, test_data, sample_submission, interest_rate, subway_info, school_info, park_info = load_raw_data()
+		train_data, test_data, sample_submission, interest_rate, subway_info, school_info, park_info = load_preprocessed_data()
 	except FileNotFoundError:
-		print("==============================")
-		print('Data not found. Downloading...')
-		print("==============================")
-		download_data()
-		extract_data()
+		try:
+			train_data, test_data, sample_submission, interest_rate, subway_info, school_info, park_info = load_raw_data()
+		except FileNotFoundError:
+			print("==============================")
+			print('Data not found. Downloading...')
+			print("==============================")
+			download_data()
+			extract_data()
 
-		train_data, test_data, sample_submission, interest_rate, subway_info, school_info, park_info = load_raw_data()
+			train_data, test_data, sample_submission, interest_rate, subway_info, school_info, park_info = load_raw_data()
 
-	train_data, test_data = data_preprocessing(train_data, test_data, interest_rate, subway_info, school_info, park_info)
+	train_data, test_data, sample_submission = data_preprocessing(train_data, test_data, sample_submission,
+																  interest_rate, subway_info, school_info, park_info)
 	train_data, test_data = feature_engineering(train_data, test_data, interest_rate, subway_info, school_info, park_info)
 
 	holdout_data, train_data = get_holdout_data(train_data)

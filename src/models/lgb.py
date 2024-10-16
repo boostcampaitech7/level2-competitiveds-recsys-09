@@ -16,6 +16,9 @@ def optimize_lgb(X_train: DataFrame, y_train: DataFrame, X_holdout: DataFrame, y
 	:param n_trials: (int) Number of trials, default=100
 	:return: (dict) Best hyperparameters
 	"""
+	print('==============================')
+	print('LightGBM Optimization')
+	print('==============================')
 	study = optuna.create_study(direction='minimize')
 	study.optimize(lambda trial: objective(trial, X_train, y_train, X_holdout, y_holdout), n_trials=n_trials)
 

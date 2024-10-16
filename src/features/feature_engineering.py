@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 from sklearn.cluster import KMeans
 
@@ -8,6 +10,8 @@ def feature_engineering(train_data, test_data, interest_rate, subway_info, schoo
 	print("==============================")
 	print("Feature Engineering")
 	print("==============================")
+
+	start_time = time.time()
 
 	facilities_info = {'subway': subway_info, 'school': school_info, 'park': park_info}
 	train_data = calculate_nearst_distances(train_data, facilities_info)
@@ -48,14 +52,16 @@ def feature_engineering(train_data, test_data, interest_rate, subway_info, schoo
 	###
 
 	columns_needed = ['deposit', 'log_area_m2', 'year', 'month', 'log_floor', 'latitude', 'longitude',
-					'log_subway_distance', 'log_school_distance', 'log_park_distance', 'log_age', 'region_cluster',
-					'interest_rate_3mo_avg']
+					  'log_subway_distance', 'log_school_distance', 'log_park_distance', 'log_age', 'region_cluster',
+					  'interest_rate_3mo_avg']
 	columns_needed_test = ['log_area_m2', 'year', 'month', 'log_floor', 'latitude', 'longitude',
-						'log_subway_distance', 'log_school_distance', 'log_park_distance', 'log_age',
-						'region_cluster', 'interest_rate_3mo_avg']
+						   'log_subway_distance', 'log_school_distance', 'log_park_distance', 'log_age',
+						   'region_cluster', 'interest_rate_3mo_avg']
 
 	train_data = train_data[columns_needed]
 	test_data = test_data[columns_needed_test]
+
+	print(f"\nFeature Engineering took {time.time() - start_time:.2f} seconds\n")
 
 	print("==============================")
 	print("Feature Engineering Completed")

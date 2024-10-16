@@ -1,3 +1,5 @@
+import time
+
 from numpy import ndarray
 from pandas import DataFrame
 from sklearn.metrics import mean_absolute_error
@@ -20,6 +22,8 @@ def train_model(X_train: DataFrame, y_train: DataFrame, X_holdout: DataFrame, y_
 	print('Training model')
 	print("==============================")
 
+	start_time = time.time()
+
 	best_params = optimize_lgb(X_train, y_train, X_holdout, y_holdout)
 
 	final_lgb = lgb.LGBMRegressor(**best_params)
@@ -30,6 +34,8 @@ def train_model(X_train: DataFrame, y_train: DataFrame, X_holdout: DataFrame, y_
 	print(f'Holdout MAE: {holdout_mae}')
 
 	y_test_pred = final_lgb.predict(X_test)
+
+	print(f"Model Training took {time.time() - start_time:.2f} seconds")
 
 	print("==============================")
 	print('Model trained')

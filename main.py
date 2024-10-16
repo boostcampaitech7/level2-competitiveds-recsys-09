@@ -14,6 +14,7 @@ np.random.seed(RANDOM_SEED)
 def main():
 	try:
 		train_data, test_data = load_processed_features()
+		_, _, submission, _, _, _, _ = load_preprocessed_data()
 	except FileNotFoundError:
 		try:
 			train_data, test_data, submission, interest_rate, subway_info, school_info, park_info = load_preprocessed_data()

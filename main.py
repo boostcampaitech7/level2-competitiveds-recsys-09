@@ -1,10 +1,10 @@
 import numpy as np
-import pandas as pd
 from src.data.data_loader import download_data, extract_data, load_raw_data
 from src.evaluation.holdout import get_holdout_data
-from src.evaluation.mae import evaluate_mae
 from src.features.feature_engineering import feature_engineering
-from src.models.lgb import train_lgb
+from src.models.train_model import train_model
+from src.preprocessing.data_preprocessing import data_preprocessing
+from src.utils.submission import submission_to_csv
 from src.utils.variables import RANDOM_SEED
 
 np.random.seed(RANDOM_SEED)
@@ -12,15 +12,18 @@ np.random.seed(RANDOM_SEED)
 
 def main():
 	try:
-		train_data, test_data, submission, interest_rate, subway_info, school_info, park_info = load_raw_data()
+		train_data, test_data, sample_submission, interest_rate, subway_info, school_info, park_info = load_raw_data()
 	except FileNotFoundError:
+		print("==============================")
 		print('Data not found. Downloading...')
+		print("==============================")
 		download_data()
 		extract_data()
 
-		train_data, test_data, submission, interest_rate, subway_info, school_info, park_info = load_raw_data()
+		train_data, test_data, sample_submission, interest_rate, subway_info, school_info, park_info = load_raw_data()
 
-	train_data, test_data = feature_engineering(train_data, test_data, interest_rate, subway_info, school_info, park_info)
+	train_data, test_data = data_preprocessing(train_data, test_data, interest_rate, subway_info, school_info, park_info)
+	train_data, test_data = feature_engineering(train_data, test_data)
 
 	holdout_data = get_holdout_data(train_data)
 
@@ -30,13 +33,9 @@ def main():
 	y_holdout = holdout_data['deposit']
 	X_test = test_data.copy()
 
-	lgb_model = train_lgb(X_train, y_train)
-	evaluate_mae(lgb_model, X_holdout, y_holdout)
+	y_test_pred = train_model(X_train, y_train, X_holdout, y_holdout, X_test)
 
-	lgb_test_pred = lgb_model.predict(X_test)
-	submission['deposit'] = lgb_test_pred
-	submission.to_csv('output.csv', index=False, encoding='utf-8-sig')
-	output = pd.read_csv('output.csv')
+	submission_to_csv(sample_submission, y_test_pred)
 
 
 if __name__ == '__main__':

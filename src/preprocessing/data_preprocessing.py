@@ -10,7 +10,6 @@ def data_preprocessing(train_data, test_data, sample_submission, interest_rate, 
 	print("==============================")
 	train_data = remove_duplicates(train_data)
 	test_data = remove_duplicates(test_data)
-	sample_submission = remove_duplicates(sample_submission)
 
 	#  Merge interest rate data
 	train_data = pd.merge(train_data, interest_rate, left_on='contract_year_month', right_on='year_month', how='left')
@@ -29,6 +28,8 @@ def data_preprocessing(train_data, test_data, sample_submission, interest_rate, 
 	print("==============================")
 	print('Data Preprocessed')
 	print("==============================")
+
+	submission = test_data['deposit'].copy()
 
 	train_data.to_csv('./data/preprocessed/train.csv', index=False)
 	test_data.to_csv('./data/preprocessed/test.csv', index=False)

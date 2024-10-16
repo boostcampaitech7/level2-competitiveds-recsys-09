@@ -12,10 +12,12 @@ np.random.seed(RANDOM_SEED)
 
 def main():
 	try:
-		train_data, test_data, sample_submission, interest_rate, subway_info, school_info, park_info = load_preprocessed_data()
+		train_data, test_data, submission, interest_rate, subway_info, school_info, park_info = load_preprocessed_data()
 	except FileNotFoundError:
 		try:
 			train_data, test_data, sample_submission, interest_rate, subway_info, school_info, park_info = load_raw_data()
+			train_data, test_data, submission = data_preprocessing(train_data, test_data, sample_submission,
+																   interest_rate, subway_info, school_info, park_info)
 		except FileNotFoundError:
 			print("==============================")
 			print('Data not found. Downloading...')
@@ -24,9 +26,9 @@ def main():
 			extract_data()
 
 			train_data, test_data, sample_submission, interest_rate, subway_info, school_info, park_info = load_raw_data()
+			train_data, test_data, submission = data_preprocessing(train_data, test_data, sample_submission,
+																   interest_rate, subway_info, school_info, park_info)
 
-	train_data, test_data, sample_submission = data_preprocessing(train_data, test_data, sample_submission,
-																  interest_rate, subway_info, school_info, park_info)
 	train_data, test_data = feature_engineering(train_data, test_data, interest_rate, subway_info, school_info, park_info)
 
 	holdout_data, train_data = get_holdout_data(train_data)
@@ -39,7 +41,7 @@ def main():
 
 	y_test_pred = train_model(X_train, y_train, X_holdout, y_holdout, X_test)
 
-	submission_to_csv(sample_submission, y_test_pred)
+	submission_to_csv(submission, y_test_pred)
 
 
 if __name__ == '__main__':

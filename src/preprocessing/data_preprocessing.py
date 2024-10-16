@@ -30,8 +30,8 @@ def data_preprocessing(train_data, test_data, sample_submission, interest_rate, 
 	print('Data Preprocessed')
 	print("==============================")
 
-	train_data.to_csv('./data/processed/train.csv', index=False)
-	test_data.to_csv('./data/processed/test.csv', index=False)
-	sample_submission.to_csv('./data/processed/sample_submission.csv', index=False)
+	train_data.to_csv('./data/preprocessed/train.csv', index=False)
+	test_data.to_csv('./data/preprocessed/test.csv', index=False)
+	sample_submission.to_csv('./data/preprocessed/sample_submission.csv', index=False)
 
 	return train_data, test_data, sample_submission

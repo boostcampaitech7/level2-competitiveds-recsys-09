@@ -39,8 +39,8 @@ def load_raw_data():
 def load_preprocessed_data():
 	print('Loading Preprocessed Data')
 
-	train_data = pd.read_csv('./data/processed/train.csv')
-	test_data = pd.read_csv('./data/processed/test.csv')
+	train_data = pd.read_csv('./data/preprocessed/train.csv')
+	test_data = pd.read_csv('./data/preprocessed/test.csv')
 	sample_submission = pd.read_csv('./data/preprocessed/sample_submission.csv')
 
 	# TODO: Load other preprocessed data

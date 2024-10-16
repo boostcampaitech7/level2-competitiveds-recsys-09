@@ -23,13 +23,13 @@ def extract_data():
 def load_raw_data():
 	print('Loading Raw Data')
 
-	train_data = pd.read_csv('/data/raw/train.csv')
-	test_data = pd.read_csv('/data/raw/test.csv')
-	submission = pd.read_csv('/data/raw/sample_submission.csv')
-	interest_rate = pd.read_csv('/data/raw/interestRate.csv')
-	subway_info = pd.read_csv('/data/raw/subwayInfo.csv')
-	school_info = pd.read_csv('/data/raw/schoolinfo.csv')
-	park_info = pd.read_csv('/data/raw/parkInfo.csv')
+	train_data = pd.read_csv('./data/raw/train.csv')
+	test_data = pd.read_csv('./data/raw/test.csv')
+	submission = pd.read_csv('./data/raw/sample_submission.csv')
+	interest_rate = pd.read_csv('./data/raw/interestRate.csv')
+	subway_info = pd.read_csv('./data/raw/subwayInfo.csv')
+	school_info = pd.read_csv('./data/raw/schoolinfo.csv')
+	park_info = pd.read_csv('./data/raw/parkInfo.csv')
 
 	print('Data Loaded')
 

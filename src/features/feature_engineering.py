@@ -5,6 +5,10 @@ from src.features.nearest_public import calculate_nearst_distances, transform_di
 
 
 def feature_engineering(train_data, test_data, interest_rate, subway_info, school_info, park_info):
+	print("==============================")
+	print("Feature Engineering")
+	print("==============================")
+
 	facilities_info = {'subway': subway_info, 'school': school_info, 'park': park_info}
 	train_data = calculate_nearst_distances(train_data, facilities_info)
 	test_data = calculate_nearst_distances(test_data, facilities_info)
@@ -52,5 +56,9 @@ def feature_engineering(train_data, test_data, interest_rate, subway_info, schoo
 
 	train_data = train_data[columns_needed]
 	test_data = test_data[columns_needed_test]
+
+	print("==============================")
+	print("Feature Engineering Completed")
+	print("==============================")
 
 	return train_data, test_data

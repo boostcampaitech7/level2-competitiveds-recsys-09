@@ -5,6 +5,9 @@ from src.preprocessing.split_data import split_year_month
 
 
 def data_preprocessing(train_data, test_data, interest_rate, subway_info, school_info, park_info):
+	print("==============================")
+	print('Data Preprocessing')
+	print("==============================")
 	train_data = remove_duplicates(train_data)
 	test_data = remove_duplicates(test_data)
 
@@ -21,5 +24,9 @@ def data_preprocessing(train_data, test_data, interest_rate, subway_info, school
 	subway_info = latlng_boundary_filter(subway_info)
 	school_info = latlng_boundary_filter(school_info)
 	park_info = latlng_boundary_filter(park_info)
+
+	print("==============================")
+	print('Data Preprocessed')
+	print("==============================")
 
 	return train_data, test_data

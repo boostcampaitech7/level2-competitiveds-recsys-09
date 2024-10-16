@@ -23,7 +23,7 @@ def main():
 		train_data, test_data, sample_submission, interest_rate, subway_info, school_info, park_info = load_raw_data()
 
 	train_data, test_data = data_preprocessing(train_data, test_data, interest_rate, subway_info, school_info, park_info)
-	train_data, test_data = feature_engineering(train_data, test_data)
+	train_data, test_data = feature_engineering(train_data, test_data, interest_rate, subway_info, school_info, park_info)
 
 	holdout_data = get_holdout_data(train_data)
 

@@ -67,4 +67,7 @@ def feature_engineering(train_data, test_data, interest_rate, subway_info, schoo
 	print("Feature Engineering Completed")
 	print("==============================")
 
+	train_data.to_csv('./data/processed_features/train_data.csv', index=False)
+	test_data.to_csv('./data/processed_features/test_data.csv', index=False)
+
 	return train_data, test_data

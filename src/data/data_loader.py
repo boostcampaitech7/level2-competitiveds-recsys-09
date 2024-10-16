@@ -52,3 +52,14 @@ def load_preprocessed_data():
 	print('Data Loaded')
 
 	return train_data, test_data, submission, interest_rate, subway_info, school_info, park_info
+
+
+def load_processed_features():
+	print('Loading Processed Features')
+
+	train_data = pd.read_csv('./data/processed_features/train_data.csv')
+	test_data = pd.read_csv('./data/processed_features/test_data.csv')
+
+	print('Data Loaded')
+
+	return train_data, test_data

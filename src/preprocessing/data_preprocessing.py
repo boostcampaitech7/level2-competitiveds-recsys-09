@@ -10,7 +10,10 @@ def data_preprocessing(train_data, test_data, interest_rate, subway_info, school
 	print("==============================")
 
 	train_data = remove_duplicates(train_data)
-	test_data = remove_duplicates(test_data)
+
+	# TODO: Remove Duplicates
+	# test_data = remove_duplicates(test_data)
+	test_data = test_data.drop(columns=['index'])
 	submission = test_data.copy()
 	submission['deposit'] = 0
 	submission = submission['deposit']

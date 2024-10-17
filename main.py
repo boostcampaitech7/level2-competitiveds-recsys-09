@@ -13,11 +13,6 @@ from src.utils.variables import RANDOM_SEED
 np.random.seed(RANDOM_SEED)
 
 
-# TODO: Add ArgumentParser for command line arguments
-# TODO: `--force-reprocess` to force reprocess data
-# TODO: `--n-trials` to specify number of trials for hyperparameter optimization
-# TODO: `--n-jobs` to specify number of parallel jobs for hyperparameter optimization
-# TODO: `--model` to specify model to train
 def main():
 	parser = argparse.ArgumentParser(description='Run project with command line arguments')
 	parser.add_argument('--force-reprocess', action='store_true', help='Force reprocess data')
@@ -49,7 +44,8 @@ def main():
 		except FileNotFoundError:
 			try:
 				train_data, test_data, submission, interest_rate, subway_info, school_info, park_info = load_preprocessed_data()
-				train_data, test_data = feature_engineering(train_data, test_data, interest_rate, subway_info, school_info,
+				train_data, test_data = feature_engineering(train_data, test_data, interest_rate, subway_info,
+															school_info,
 															park_info)
 			except FileNotFoundError:
 				try:

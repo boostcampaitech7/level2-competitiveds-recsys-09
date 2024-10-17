@@ -17,7 +17,7 @@ python main.py
 - `--force-preprocess`: Force reprocessing of the raw data and skip loading processed features.
 - `--model`Choose the model to train (options: lgb, xgb, default: lgb).
 - `--n-trials`: Specify the number of trials for hyperparameter optimization (default: 100).
-- `--n-jobs`: Number of jobs to run in parallel (default: 1).
+- `--n-jobs`: Number of jobs to run in parallel (default: 1). `-1` means using all CPU threads.
 
 ### example
 ```bash

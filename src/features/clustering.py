@@ -3,8 +3,6 @@ import pandas as pd
 import torch
 
 # call kmeans(data: pd.DataFrame, n_clusters: int, max_iters: int, tol: float)
-# data have to be a pd.DataFrame with 'latitude' and 'longitude' columns
-
 
 def haversine_distance(lat1, lon1, lat2, lon2):
     """
@@ -66,6 +64,7 @@ def kmeans(data: pd.DataFrame, n_clusters: int, max_iters: int, tol: float):
 	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 	print(f"Using device: {device}")
 
+	data = data[['latitude', 'longitude']]
 	data = torch.tensor(data.values, dtype=torch.float32).to(device)
 
 	centroids = initialize_centroids(data, n_clusters)

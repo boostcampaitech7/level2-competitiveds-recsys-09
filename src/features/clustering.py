@@ -1,6 +1,5 @@
 import time
 import pandas as pd
-import numpy as np
 import torch
 
 # call kmeans(data: pd.DataFrame, n_clusters: int, max_iters: int, tol: float)
@@ -58,9 +57,9 @@ def kmeans(data: pd.DataFrame, n_clusters: int, max_iters: int, tol: float):
 	:param tol: (float) Tolerance for convergence
 	:return: (torch.Tensor) Centroids, (torch.Tensor) Cluster
 	"""
-	print("==============================")
+	print("------------------------------")
 	print("Clustering Start")
-	print("==============================")
+	print("------------------------------")
     
 	start_time = time.time()
 
@@ -84,8 +83,8 @@ def kmeans(data: pd.DataFrame, n_clusters: int, max_iters: int, tol: float):
             
 	print(f"\nClustering took {time.time() - start_time:.2f} seconds\n")
 
-	print("==============================")
+	print("------------------------------")
 	print("Clustering Completed")
-	print("==============================")
+	print("------------------------------")
 	
 	return centroids, cluster_assignments

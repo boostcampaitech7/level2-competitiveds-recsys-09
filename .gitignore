@@ -1,8 +1,17 @@
 # raw data
 /data/raw/*.csv
 
+# data
+/data
+
 # baseline code
 /notebooks/baseline.ipynb
 
+#notebooks
+/notebooks/*.ipynb
+
 # PyCharm
 /.idea
+
+# vscode
+__pycache__

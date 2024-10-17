@@ -5,7 +5,7 @@ import pandas as pd
 def download_data():
 	print('Downloading Data')
 
-	os.makedirs('/data/raw', exist_ok=True)
+	os.makedirs('./data/raw', exist_ok=True)
 	os.system(
 		'wget https://aistages-api-public-prod.s3.amazonaws.com/app/Competitions/000314/data/20240918075312/data.tar.gz')
 
@@ -15,7 +15,7 @@ def download_data():
 def extract_data():
 	print('Extracting Data')
 
-	os.system('tar -xvf data/raw/data.tar.gz -C data/raw/')
+	os.system('tar -xvf ./data/raw/data.tar.gz -C data/raw/')
 
 	print('Data Extracted')
 

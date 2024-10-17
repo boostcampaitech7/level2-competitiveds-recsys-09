@@ -47,7 +47,7 @@ def objective(trial, X_train: DataFrame, y_train: DataFrame, X_holdout: DataFram
 		'seed': RANDOM_SEED,
 		'learning_rate': trial.suggest_float('learning_rate', 1e-3, 1e-1),
 		'n_estimators': trial.suggest_int('n_estimators', 50, 500),
-		'max_depth': trial.suggest_int('max_depth', 3, 20),
+		'max_depth': trial.suggest_int('max_depth', 3, 30),
 		'min_child_weight': trial.suggest_int('min_child_weight', 1, 10),
 		'gamma': trial.suggest_float('gamma', 0, 5),
 		'subsample': trial.suggest_float('subsample', 0.1, 1.0),

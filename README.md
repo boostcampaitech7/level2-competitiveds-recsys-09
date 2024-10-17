@@ -21,7 +21,7 @@ python main.py
 
 ### example
 ```bash
-python main.py --force-preprocess --model xgb --n-trails 10 --n-jobs 2
+python main.py --force-preprocess --model xgb --n-trials 10 --n-jobs 2
 ```
 
 # Directory Structure

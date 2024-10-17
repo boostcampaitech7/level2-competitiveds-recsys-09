@@ -7,7 +7,7 @@ from src.utils.variables import RANDOM_SEED
 
 
 def optimize_xgb(X_train: DataFrame, y_train: DataFrame, X_holdout: DataFrame, y_holdout: DataFrame,
-				 n_trials=100) -> dict:
+				 n_trials=100, n_jobs=1) -> dict:
 	"""
 	Optimize XGBoost hyperparameters using Optuna
 	:param X_train: (DataFrame) Feature data for training
@@ -15,6 +15,7 @@ def optimize_xgb(X_train: DataFrame, y_train: DataFrame, X_holdout: DataFrame, y
 	:param X_holdout: (DataFrame) Feature data for holdout
 	:param y_holdout: (DataFrame) Target data for holdout
 	:param n_trials: (int) Number of trials, default=100
+	:param n_jobs: (int) Number of parallel jobs, default=1
 	:return: (dict) Best hyperparameters
 	"""
 	print('==============================')
@@ -22,7 +23,7 @@ def optimize_xgb(X_train: DataFrame, y_train: DataFrame, X_holdout: DataFrame, y
 	print('==============================')
 
 	study = optuna.create_study(direction='minimize')
-	study.optimize(lambda trial: objective(trial, X_train, y_train, X_holdout, y_holdout), n_trials=n_trials)
+	study.optimize(lambda trial: objective(trial, X_train, y_train, X_holdout, y_holdout), n_trials=n_trials, n_jobs=n_jobs)
 
 	print(f'Best trial: {study.best_trial.value}')
 	print(f'Best params: {study.best_params}')

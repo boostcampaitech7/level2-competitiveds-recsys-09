@@ -34,7 +34,11 @@ def train_model(X_train: DataFrame, y_train: DataFrame, X_holdout: DataFrame, y_
 	# y_test_pred = final_lgb.predict(X_test)
 	###
 
-	best_params = optimize_xgb(X_train, y_train, X_holdout, y_holdout, 1)
+	##################################################
+	# 					WARNING						 #
+	#   n_jobs=-1 will use all available CPU cores   #
+	##################################################
+	best_params = optimize_xgb(X_train, y_train, X_holdout, y_holdout, 1, n_jobs=-1)
 
 	final_xgb = xgb.XGBRegressor(**best_params)
 	final_xgb.fit(X_train, y_train)

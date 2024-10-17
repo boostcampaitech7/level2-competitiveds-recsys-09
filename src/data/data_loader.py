@@ -15,7 +15,7 @@ def download_data():
 def extract_data():
 	print('Extracting Data')
 
-	os.system('tar -xvf ./data.tar.gz -C data/raw/')
+	os.system('tar -xvf ./data.tar.gz -C ./data/raw/')
 	os.system('rm ./data.tar.gz')
 
 	print('Data Extracted')

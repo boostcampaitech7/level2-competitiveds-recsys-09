@@ -1,9 +1,11 @@
+from catboost import CatBoostRegressor
 import lightgbm as lgb
 from numpy import ndarray
 from pandas import DataFrame
 import time
 import xgboost as xgb
 
+from src.models.cat import optimize_cat
 from src.models.lgb import optimize_lgb
 from src.models.xgb import optimize_xgb
 
@@ -36,6 +38,11 @@ def train_model(X_train: DataFrame, y_train: DataFrame, X_holdout: DataFrame, y_
 	elif model == 'xgb':
 		best_params = optimize_xgb(X_train, y_train, X_holdout, y_holdout, n_trials=n_trials, n_jobs=n_jobs)
 		final_model = xgb.XGBRegressor(**best_params, n_jobs=n_jobs)
+		final_model.fit(X_train, y_train)
+		
+	elif model == 'cat':
+		best_params = optimize_cat(X_train, y_train, X_holdout, y_holdout, n_trials=n_trials, n_jobs=n_jobs)
+		final_model = CatBoostRegressor(**best_params)
 		final_model.fit(X_train, y_train)
 
 	else:

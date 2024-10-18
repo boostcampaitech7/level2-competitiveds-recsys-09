@@ -1,6 +1,6 @@
 from pandas import DataFrame
 
-def add_year_month_date(data: DataFrame) -> DataFrame:
+def add_year_month_day(data: DataFrame) -> DataFrame:
     """
     Add year_month_day
     :param data: (DataFrame) Data to add year_month_day

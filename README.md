@@ -44,6 +44,8 @@ deposit_prediction
     │   └── holdout.py
     ├── features
     │   ├── __init__.py
+    │   ├── one_hot_encoding.py         # category feature를 one-hot encoding
+    │   ├── year_month_day.py           # year와 month와 contract_day를 합친 contract 날짜 feature 추가
     │   ├── feature_engineering.py
     │   └── nearest_public.py
     ├── models

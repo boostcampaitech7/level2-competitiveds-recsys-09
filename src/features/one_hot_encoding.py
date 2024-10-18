@@ -4,6 +4,7 @@ from pandas import DataFrame
 def one_hot_encoding(data: DataFrame, columns: list) -> DataFrame:
     """
     One-hot encoding for categorical features
+    주의: 기존 column을 drop함
     :param data: (DataFrame) Data to one-hot encode
     :return: (DataFrame) Data with one-hot encoded features
     """

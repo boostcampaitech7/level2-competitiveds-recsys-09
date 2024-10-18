@@ -1,7 +1,7 @@
 import time
 import pandas as pd
 import torch
-
+from utils.variables import RANDOM_SEED
 # call kmeans(data: pd.DataFrame, n_clusters: int, max_iters: int, tol: float)
 
 def haversine_distance(lat1, lon1, lat2, lon2):
@@ -32,7 +32,7 @@ def initialize_centroids(data, n_clusters):
     :return: (torch.Tensor) Centroids
     """
     n_samples = data.size(0)
-    
+    torch.manual_seed(RANDOM_SEED)
     centroids = [data[torch.randint(0, n_samples, (1,)).item()]]
     
     for _ in range(1, n_clusters):

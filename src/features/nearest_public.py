@@ -14,6 +14,24 @@ def nearest_public_balltree(data: pd.DataFrame, points: pd.DataFrame) -> list:
 	distances, _ = tree.query(data[['latitude', 'longitude']], k=1)
 	return distances.flatten()
 
+def nearest_public_balltree_with_count_id(data: pd.DataFrame, points: pd.DataFrame) -> list:
+	"""
+	Find the nearest public facility using BallTree
+	:param data: (pd.DataFrame) Data
+	:param points: (pd.DataFrame) Target points
+	:return: (list) Nearest distance
+	"""
+	tree = BallTree(points[['latitude', 'longitude']], metric='haversine')
+	distances, idxs = tree.query(data[['latitude', 'longitude']], k=5)
+
+	distances = distances * 100000
+
+	# count the number of public facilities within 1km
+	counts = np.sum(distances < 1000, axis=1)
+	# get the ID of the nearest public facility
+	IDs = points['ID'].iloc[idxs[:, 0]].values
+
+	return distances[:, 0], IDs, counts
 
 def calculate_nearst_distances(data: pd.DataFrame, facilities_info: dict) -> pd.DataFrame:
 	"""
@@ -27,6 +45,22 @@ def calculate_nearst_distances(data: pd.DataFrame, facilities_info: dict) -> pd.
 
 	return data
 
+def calculate_nearst_distances_count_id(data: pd.DataFrame, facilities_info: dict) -> pd.DataFrame:
+	"""
+	Calculate the nearest distance from the public facilities
+	:param data: (pd.DataFrame) Data
+	:param facilities_info: (dict) Public facility information
+	:return: (pd.DataFrame) Data with nearest distance columns
+	"""
+	for facility_name, facility_info in facilities_info.items():
+		
+		print(f'Calculating the nearest distance from {facility_name}')
+		distances, IDs, counts = nearest_public_balltree_with_count_id(data, facility_info)
+		data[f'{facility_name}_distance'] = distances
+		data[f'{facility_name}_ID'] = IDs
+		data[f'{facility_name}_count'] = counts
+
+	return data
 
 def nearest_public_log_transform(distance: pd.Series) -> pd.Series:
 	"""

@@ -20,7 +20,8 @@ def main():
 						help='Number of trials for hyperparameter optimization (default=100)')
 	parser.add_argument('--n-jobs', type=int, default=1,
 						help='Number of CPU threads for hyperparameter optimization (default=1)')
-	parser.add_argument('--model', type=str, default='lgb', choices=['lgb', 'xgb'], help='Model to train (default=lgb)')
+	parser.add_argument('--model', type=str, default='lgb', choices=['lgb', 'xgb', 'cat'], help='Model to train (default=lgb)')
+	parser.add_argument('--submission', type=str, default='output.csv', help='Submission file name (default=output.csv)')
 
 	args = parser.parse_args()
 
@@ -77,7 +78,7 @@ def main():
 
 	y_test_pred = train_model(X_train, y_train, X_holdout, y_holdout, X_test, args.model, args.n_trials, args.n_jobs)
 
-	submission_to_csv(submission, y_test_pred)
+	submission_to_csv(submission, y_test_pred, args.submission)
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 import pandas as pd
 import torch
-from clustering import haversine_distance
+from src.features.clustering import haversine_distance
 
 def calculate_cluster_deposit_per_m2(train_data, cluster_assignments, n_clusters):
     """
@@ -47,7 +47,7 @@ def assign_clusters_to_test_data(test_data, centroids):
     :return: (torch.Tensor) Cluster assignments for the test data
     """
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    data_tensor = torch.tensor(test_data[['latitude', 'longitude']].values, dtype=torch.float32).to('device')
+    data_tensor = torch.tensor(test_data[['latitude', 'longitude']].values, dtype=torch.float32).to(device)
     centroids = centroids.to('device')
     distances = torch.stack([haversine_distance(data_tensor[:, 0], data_tensor[:, 1], c[0], c[1]) for c in centroids], dim=1)
     

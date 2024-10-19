@@ -1,7 +1,7 @@
 import time
 import pandas as pd
 import torch
-from utils.variables import RANDOM_SEED
+from src.utils.variables import RANDOM_SEED
 # call kmeans(data: pd.DataFrame, n_clusters: int, max_iters: int, tol: float)
 
 def haversine_distance(lat1, lon1, lat2, lon2):

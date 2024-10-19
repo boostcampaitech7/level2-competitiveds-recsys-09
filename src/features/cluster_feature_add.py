@@ -1,6 +1,6 @@
 import pandas as pd
-from feature_engineering import calculate_cluster_deposit_per_m2, add_cluster_results_to_train_data, assign_clusters_to_test_data, add_test_data_clusters_and_deposit
-from clustering import kmeans
+from src.features.cluster_deposit_per_area import calculate_cluster_deposit_per_m2, add_cluster_results_to_train_data, assign_clusters_to_test_data, add_test_data_clusters_and_deposit
+from src.features.clustering import kmeans
 
 def perform_clustering_and_calculate_deposit(train_data, test_data, n_clusters_list, max_iters, tol):
     """
@@ -40,5 +40,8 @@ def perform_clustering_and_calculate_deposit(train_data, test_data, n_clusters_l
                                                                    cluster_deposit_per_m2, 
                                                                    str(n_clusters))
         test_features.append(test_cluster_features)
+
+    train_features_df = pd.concat(train_features, axis=1)
+    test_features_df = pd.concat(test_features, axis=1)
     
-    return train_features, test_features
+    return train_features_df, test_features_df

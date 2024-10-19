@@ -17,6 +17,10 @@ def data_preprocessing(train_data, test_data, interest_rate, subway_info, school
 	submission = test_data.copy()
 	submission['deposit'] = 0
 	submission = submission['deposit']
+	
+	# change negative age to positive
+	train_data["age"] = train_data["age"].abs()
+	test_data["age"] = test_data["age"].abs()
 
 	#  Merge interest rate data
 	train_data = pd.merge(train_data, interest_rate, left_on='contract_year_month', right_on='year_month', how='left')

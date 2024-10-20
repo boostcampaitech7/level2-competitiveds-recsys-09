@@ -20,7 +20,7 @@ def calculate_cluster_deposit_per_m2(train_data, cluster_assignments, n_clusters
 
 def add_cluster_results_to_train_data(train_data, cluster_assignments, cluster_deposit_per_m2, cluster_label):
     train_data[f'cluster_{cluster_label}'] = cluster_assignments.cpu().numpy()
-    train_data[f'cluster_deposit_per_m2_{cluster_label}'] = train_data[f'cluster_{cluster_label}'].map(lambda cluster: cluster_deposit_per_m2[cluster])
+    train_data[f'cluster_{cluster_label}_deposit_per_m2'] = train_data[f'cluster_{cluster_label}'].map(lambda cluster: cluster_deposit_per_m2[cluster])
     return train_data
 
 
@@ -34,5 +34,5 @@ def assign_clusters_to_test_data(test_data, centroids):
 
 def add_test_data_clusters_and_deposit(test_data, cluster_assignments, cluster_deposit_per_m2, cluster_label):
     test_data[f'cluster_{cluster_label}'] = cluster_assignments
-    test_data[f'cluster_deposit_per_m2_{cluster_label}'] = test_data[f'cluster_{cluster_label}'].map(lambda cluster: cluster_deposit_per_m2[cluster])
+    test_data[f'cluster_{cluster_label}_deposit_per_m2'] = test_data[f'cluster_{cluster_label}'].map(lambda cluster: cluster_deposit_per_m2[cluster])
     return test_data

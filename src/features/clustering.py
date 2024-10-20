@@ -25,12 +25,6 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     return R * c
 
 def initialize_centroids(data, n_clusters):
-    """
-    Initialize centroids using k-means++
-    :param data: (torch.Tensor) Data
-    :param n_clusters: (int) Number of clusters
-    :return: (torch.Tensor) Centroids
-    """
     n_samples = data.size(0)
     torch.manual_seed(RANDOM_SEED)
     centroids = [data[torch.randint(0, n_samples, (1,)).item()]]
@@ -47,18 +41,9 @@ def initialize_centroids(data, n_clusters):
 
 
 def kmeans(data: pd.DataFrame, n_clusters: int, max_iters: int, tol: float):
-	"""
-	K-Means clustering
-	:param data: (pd.DataFrame) longitude and latitude data of the train_data
-	:param n_clusters: (int) Number of clusters
-	:param max_iters: (int) Maximum number of iterations
-	:param tol: (float) Tolerance for convergence
-	:return: (torch.Tensor) Centroids, (torch.Tensor) Cluster
-	"""
-	print("------------------------------")
+
 	print("Clustering Start")
-	print("------------------------------")
-    
+
 	start_time = time.time()
 
 	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -82,8 +67,6 @@ def kmeans(data: pd.DataFrame, n_clusters: int, max_iters: int, tol: float):
             
 	print(f"\nClustering took {time.time() - start_time:.2f} seconds\n")
 
-	print("------------------------------")
 	print("Clustering Completed")
-	print("------------------------------")
 	
 	return centroids, cluster_assignments

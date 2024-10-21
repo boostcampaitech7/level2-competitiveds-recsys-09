@@ -18,7 +18,6 @@ def data_preprocessing(train_data, test_data, interest_rate, subway_info, school
 	submission['deposit'] = 0
 	submission = submission['deposit']
 	
-	# change negative age to positive
 	train_data["age"] = train_data["age"].abs()
 	test_data["age"] = test_data["age"].abs()
 

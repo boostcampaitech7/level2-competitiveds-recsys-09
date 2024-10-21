@@ -16,7 +16,7 @@ def perform_clustering_and_calculate_deposit(train_data, test_data, n_clusters_l
         centroids, cluster_assignments = kmeans(train_data, n_clusters, max_iters, tol)
 
         cluster_deposit_per_m2 = calculate_cluster_deposit_per_m2(train_data, cluster_assignments, n_clusters)
-        train_cluster_features = add_cluster_results_to_train_data(train_data[['latitude', 'longitude']], 
+        train_cluster_features = add_cluster_results_to_train_data(train_data, 
                                                                    cluster_assignments, 
                                                                    cluster_deposit_per_m2, 
                                                                    str(n_clusters))
@@ -24,7 +24,7 @@ def perform_clustering_and_calculate_deposit(train_data, test_data, n_clusters_l
         
         cluster_assignments_test = assign_clusters_to_test_data(test_data, centroids)
         
-        test_cluster_features = add_test_data_clusters_and_deposit(test_data[['latitude', 'longitude']], 
+        test_cluster_features = add_test_data_clusters_and_deposit(test_data, 
                                                                    cluster_assignments_test, 
                                                                    cluster_deposit_per_m2, 
                                                                    str(n_clusters))

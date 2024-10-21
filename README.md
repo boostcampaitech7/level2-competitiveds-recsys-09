@@ -44,7 +44,11 @@ deposit_prediction
     │   └── holdout.py
     ├── features
     │   ├── __init__.py
-    │   ├── feature_engineering.py
+    │   ├── one_hot_encoding.py         # category feature를 one-hot encoding
+    │   ├── year_month_day.py           # year와 month와 contract_day를 합친 contract 날짜 feature 추가
+    │   ├── clustering.py               # 실제 거리를 고려한 클러스터링 수행
+    │   ├── cluster_deposit_per_area.py # 클러스터별 평당 평균 가격 계산 및 feature 추가
+    │   ├── cluster_feature_add.py      # 수행한 결과 리턴
     │   └── nearest_public.py
     ├── models
     │   ├── __init__.py

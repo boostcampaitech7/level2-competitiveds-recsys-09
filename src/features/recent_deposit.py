@@ -91,19 +91,20 @@ def merge_final_price(train_dist, building_price_avg, df_last_transaction):
 
     return result[['latitude', 'longitude', 'final_price']]
 
-def fill_missing_final_price_in_test(test_dist):
+def fill_missing_final_price_in_test(train_dist,test_dist):
     """
     Test 데이터에서 final_price가 없는 경우 같은 클러스터에 속한 건물들의 평균 final_price로 대체하는 함수.
     클러스터링 이후에 진행되어야 함
     
     Parameters:
+    - train_dist : train 데이터프레임 -> 클러스터링 이후에 진행해야함
     - test_dist: Test 데이터프레임 -> 클러스터링 이후에 진행해야함
 
     Returns:
     - test_dist: final_price가 같은 클러스터의 평균값으로 대체된 데이터프레임
     """
     # 클러스터별 final_price의 평균값 계산
-    cluster_avg_price_test = test_dist.groupby('region_cluster')['final_price'].mean().reset_index()
+    cluster_avg_price_test = train_dist.groupby('region_cluster')['final_price'].mean().reset_index()
 
     # 결측값을 클러스터 평균으로 대체
     test_dist = pd.merge(test_dist, cluster_avg_price_test, on='region_cluster', how='left', suffixes=('', '_cluster_avg'))

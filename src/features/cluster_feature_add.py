@@ -9,10 +9,9 @@ def perform_clustering_and_calculate_deposit(train_data, test_data, n_clusters_l
         return pd.read_csv('./data/preprocessed/train_cluster_features.csv'), pd.read_csv('./data/preprocessed/test_cluster_features.csv')
 
 
-    train_features = [train_data[['latitude', 'longitude']]]
-    test_features = [test_data[['latitude', 'longitude']]]
-    
     for n_clusters in n_clusters_list:
+        train_features = [train_data[['latitude', 'longitude']]]
+        test_features = [test_data[['latitude', 'longitude']]]
         centroids, cluster_assignments = kmeans(train_data, n_clusters, max_iters, tol)
 
         cluster_deposit_per_m2 = calculate_cluster_deposit_per_m2(train_data, cluster_assignments, n_clusters)

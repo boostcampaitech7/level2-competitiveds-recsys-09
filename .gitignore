@@ -1,8 +1,16 @@
 # raw data
 /data/raw/*.csv
+/data
 
 # baseline code
 /notebooks/baseline.ipynb
 
 # PyCharm
 /.idea
+
+# catboost
+/catboost_info
+
+# notebooks
+test.ipynb
+tmp.ipynb

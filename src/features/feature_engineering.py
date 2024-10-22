@@ -7,7 +7,7 @@ from sklearn.neighbors import NearestCentroid
 from sklearn.preprocessing import StandardScaler
 
 from src.features.nearest_public import calculate_nearst_distances_count_id, transform_distances
-from features.weight import set_weight
+from src.features.weight import set_weight
 
 
 def feature_engineering(train_data, test_data, interest_rate, subway_info, elementary_info, middle_info, high_info, park_info):
@@ -18,7 +18,9 @@ def feature_engineering(train_data, test_data, interest_rate, subway_info, eleme
 	start_time = time.time()
 
 	facilities_info = {'subway': subway_info, 'elementary': elementary_info, 'middle': middle_info, 'high': high_info, 'park': park_info}
+	print('start train_data distance calculation')
 	train_data = calculate_nearst_distances_count_id(train_data, facilities_info)
+	print('start test_data distance calculation')
 	test_data = calculate_nearst_distances_count_id(test_data, facilities_info)
 
 	'''distance_columns = ['subway_distance', 'school_distance', 'park_distance']
@@ -56,12 +58,14 @@ def feature_engineering(train_data, test_data, interest_rate, subway_info, eleme
 	###'''
 
 	# weight 설정
-	train_data = set_weight(train_data, 2)
+	weight = 2
+	print(f'Setting weight to {weight}')
+	train_data = set_weight(train_data, weight)
 
 	# 필요한 열만 선택
 	train_data_clustering = train_data[['latitude', 'longitude', 'deposit']]
 	test_data_clustering = test_data[['latitude', 'longitude']]
-	test_data_clustering['deposit'] = 0
+	test_data_clustering.loc[:, 'deposit'] = 0
 
 	# 스케일링
 	scaler = StandardScaler()
@@ -87,7 +91,7 @@ def feature_engineering(train_data, test_data, interest_rate, subway_info, eleme
 						'subway_distance', 'elementary_distance', 'middle_distance', 'high_distance', 'park_distance', 
 						'subway_ID', 'elementary_ID', 'middle_ID', 'high_ID', 'park_ID',
 						'subway_count', 'elementary_count', 'middle_count', 'high_count', 'park_count',
-						'age', 'interest_rate', 'region_cluster']
+						'age', 'interest_rate', 'region_cluster', 'weight']
 
 	columns_needed_test = ['area_m2', 'year', 'month', 'floor', 'latitude', 'longitude',
 						'subway_distance', 'elementary_distance', 'middle_distance', 'high_distance', 'park_distance', 

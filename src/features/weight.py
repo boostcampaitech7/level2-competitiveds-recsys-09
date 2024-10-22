@@ -16,10 +16,10 @@ def set_weight(train_data: DataFrame, weight: float) -> DataFrame:
     
     default_weight = 1
     
-    train_data[(train_data['year'] * 100 + train_data['month'] >= WEIGHT_START) & (
-                    train_data['year'] * 100 + train_data['month'] <= WEIGHT_END)]['weight'] = weight
+    condition = (train_data['year'] * 100 + train_data['month'] >= WEIGHT_START) & (
+                train_data['year'] * 100 + train_data['month'] <= WEIGHT_END)
     
-    train_data[~((train_data['year'] * 100 + train_data['month'] >= WEIGHT_START) & (
-                    train_data['year'] * 100 + train_data['month'] <= WEIGHT_END))]['weight'] = default_weight
+    train_data.loc[condition, 'weight'] = weight
+    train_data.loc[~condition, 'weight'] = default_weight
     
     return train_data

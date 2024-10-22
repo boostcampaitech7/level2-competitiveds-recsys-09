@@ -59,7 +59,7 @@ def transform_sqrt_distances(data: pd.DataFrame, columns: list) -> pd.DataFrame:
 
 	return data
 
-def count_within_radius(df: pd.DataFrame, points: pd.DataFrame, radius=0.005):
+def count_within_radius(df: pd.DataFrame, points: pd.DataFrame, radius=1):
 	"""
 	Count the number of points within the radius
 	:param df: (pd.DataFrame) Data
@@ -67,13 +67,13 @@ def count_within_radius(df: pd.DataFrame, points: pd.DataFrame, radius=0.005):
 	:param radius: (float) Radius
 	:return: (int) Count
 	"""
-	tree = BallTree(points[['latitude', 'longitude']], metric='haversine')
-	count = tree.query_radius(df[['latitude', 'longitude']], r=radius, count_only=True)
+	tree = BallTree(np.radians(points[['latitude', 'longitude']]), metric='haversine')
+	count = tree.query_radius(np.radians(df[['latitude', 'longitude']]), r=radius, count_only=True)
 	return count
 
 
-def nearest_school_count_with_type(data: pd.DataFrame, school_info: pd.DataFrame, elementary_distance=0.005,
-								   middle_distance=0.3, high_distance=0.3) -> pd.DataFrame:
+def nearest_school_count_with_type(data: pd.DataFrame, school_info: pd.DataFrame, elementary_distance=1,
+								   middle_distance=3, high_distance=3) -> pd.DataFrame:
 	"""
 	Count the number of schools with types within the distance
 	:param data: (pd.DataFrame) Data

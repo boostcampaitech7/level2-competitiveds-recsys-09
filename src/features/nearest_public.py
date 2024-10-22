@@ -68,11 +68,11 @@ def nearest_school_count_with_type(data: pd.DataFrame, school_info: pd.DataFrame
 	:param high_distance: (int) High school distance
 	:return: (pd.DataFrame) Data with school count columns
 	"""
-	data['elementary_school_count'] = count_within_radius(data, school_info[school_info['type'] == 'elementary'],
+	data['elementary_school_count'] = count_within_radius(data, school_info[school_info['schoolLevel'] == 'elementary'],
 														  radius=elementary_distance)
-	data['middle_school_count'] = count_within_radius(data, school_info[school_info['type'] == 'middle'],
+	data['middle_school_count'] = count_within_radius(data, school_info[school_info['schoolLevel'] == 'middle'],
 													  radius=middle_distance)
-	data['high_school_count'] = count_within_radius(data, school_info[school_info['type'] == 'high'],
+	data['high_school_count'] = count_within_radius(data, school_info[school_info['schoolLevel'] == 'high'],
 													radius=high_distance)
 
 	return data

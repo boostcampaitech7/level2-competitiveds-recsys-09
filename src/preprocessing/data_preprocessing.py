@@ -12,7 +12,7 @@ def data_preprocessing(train_data, test_data, interest_rate, subway_info, school
 
 	train_data = remove_duplicates(train_data)
 	train_data = remove_underrepresented(train_data, 5)
-	train_data = remove_outliers(train_data, 'deposit', 0.99)
+	train_data = remove_outliers(train_data, 'deposit', 1.5)
 
 	test_data = test_data.drop(columns=['index'])
 	#  Merge interest rate data

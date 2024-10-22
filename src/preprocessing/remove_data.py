@@ -20,7 +20,10 @@ def remove_outliers(data: DataFrame, column: str, threshold: float) -> DataFrame
 	:param threshold: (float) Threshold to remove outliers
 	:return: (DataFrame) DataFrame without outliers
 	"""
-	return data[(data[column] < threshold) | (data[column] > data[column].quantile(1 - threshold))]
+	q1 = data[column].quantile(0.25)
+	q3 = data[column].quantile(0.75)
+	iqr = q3 - q1
+	return data[(data[column] >= q1 - threshold * iqr) & (data[column] <= q3 + threshold * iqr)]
 
 
 def latlng_boundary_filter(data: DataFrame) -> DataFrame:

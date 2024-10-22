@@ -57,10 +57,10 @@ def feature_engineering(train_data, test_data, interest_rate, subway_info, schoo
 	###
 
 	columns_needed = ['deposit', 'log_area_m2', 'year', 'month', 'log_floor', 'latitude', 'longitude',
-					  'log_subway_distance', 'log_school_distance', 'log_park_distance', 'log_age', 'region_cluster',
+					  'sqrt_subway_distance', 'sqrt_school_distance', 'sqrt_park_distance', 'log_age', 'region_cluster',
 					  'interest_rate_3mo_avg']
 	columns_needed_test = ['log_area_m2', 'year', 'month', 'log_floor', 'latitude', 'longitude',
-						   'log_subway_distance', 'log_school_distance', 'log_park_distance', 'log_age',
+						   'sqrt_subway_distance', 'sqrt_school_distance', 'sqrt_park_distance', 'log_age',
 						   'region_cluster', 'interest_rate_3mo_avg']
 
 	train_data = train_data[columns_needed]

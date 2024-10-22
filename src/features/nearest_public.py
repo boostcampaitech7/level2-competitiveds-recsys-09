@@ -37,12 +37,27 @@ def nearest_public_log_transform(distance: pd.Series) -> pd.Series:
 	return np.log1p(distance)
 
 
-def transform_distances(data: pd.DataFrame, columns: list) -> pd.DataFrame:
+def transform_log_distances(data: pd.DataFrame, columns: list) -> pd.DataFrame:
 	for col in columns:
 		data[f'log_{col}'] = nearest_public_log_transform(data[col])
 
 	return data
 
+
+def nearest_public_sqrt_transform(distance: pd.Series) -> pd.Series:
+	"""
+	Calculate the square root transform of the column
+	:param distance: (pd.Series) nearest Public facility distance
+	:return: (pd.Series) Square root transformed column
+	"""
+	return np.sqrt(distance)
+
+
+def transform_sqrt_distances(data: pd.DataFrame, columns: list) -> pd.DataFrame:
+	for col in columns:
+		data[f'sqrt_{col}'] = nearest_public_sqrt_transform(data[col])
+
+	return data
 
 def count_within_radius(df: pd.DataFrame, points: pd.DataFrame, radius=0.005):
 	"""

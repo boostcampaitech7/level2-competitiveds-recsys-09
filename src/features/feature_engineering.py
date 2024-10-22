@@ -13,6 +13,8 @@ def feature_engineering(train_data, test_data, interest_rate, subway_info, schoo
 
 	start_time = time.time()
 
+	park_info = park_info[park_info['area'] >= 100000]
+
 	facilities_info = {'subway': subway_info, 'school': school_info, 'park': park_info}
 	train_data = calculate_nearst_distances(train_data, facilities_info)
 	test_data = calculate_nearst_distances(test_data, facilities_info)

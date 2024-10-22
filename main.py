@@ -1,8 +1,7 @@
 import argparse
 import numpy as np
 
-from src.data.data_loader import download_data, extract_data, load_raw_data, load_preprocessed_data, \
-	load_processed_features
+import src.data.data_loader as dl
 from src.evaluation.holdout import get_holdout_data
 from src.features.feature_engineering import feature_engineering
 from src.models.train_model import train_model
@@ -20,8 +19,10 @@ def main():
 						help='Number of trials for hyperparameter optimization (default=100)')
 	parser.add_argument('--n-jobs', type=int, default=1,
 						help='Number of CPU threads for hyperparameter optimization (default=1)')
-	parser.add_argument('--model', type=str, default='lgb', choices=['lgb', 'xgb', 'cat'], help='Model to train (default=lgb)')
-	parser.add_argument('--submission', type=str, default='output.csv', help='Submission file name (default=output.csv)')
+	parser.add_argument('--model', type=str, default='lgb', choices=['lgb', 'xgb', 'cat'],
+						help='Model to train (default=lgb)')
+	parser.add_argument('--submission', type=str, default='output.csv',
+						help='Submission file name (default=output.csv)')
 
 	args = parser.parse_args()
 
@@ -30,28 +31,26 @@ def main():
 		print("==============================")
 		print('Force reprocessing data')
 		print("==============================")
-		download_data()
-		extract_data()
+		dl.download_data()
+		dl.extract_data()
 
-		train_data, test_data, interest_rate, subway_info, school_info, park_info = load_raw_data()
-		train_data, test_data, submission, interest_rate, subway_info, school_info, park_info = data_preprocessing(
+		train_data, test_data, interest_rate, subway_info, school_info, park_info = dl.load_raw_data()
+		train_data, test_data, interest_rate, subway_info, school_info, park_info = data_preprocessing(
 			train_data, test_data, interest_rate, subway_info, school_info, park_info)
 		train_data, test_data = feature_engineering(train_data, test_data, interest_rate, subway_info,
 													school_info, park_info)
 	else:
 		try:
-			train_data, test_data = load_processed_features()
-			_, _, submission, _, _, _, _ = load_preprocessed_data()
+			train_data, test_data = dl.load_processed_features()
 		except FileNotFoundError:
 			try:
-				train_data, test_data, submission, interest_rate, subway_info, school_info, park_info = load_preprocessed_data()
+				train_data, test_data, interest_rate, subway_info, school_info, park_info = dl.load_preprocessed_data()
 				train_data, test_data = feature_engineering(train_data, test_data, interest_rate, subway_info,
-															school_info,
-															park_info)
+															school_info, park_info)
 			except FileNotFoundError:
 				try:
-					train_data, test_data, interest_rate, subway_info, school_info, park_info = load_raw_data()
-					train_data, test_data, submission, interest_rate, subway_info, school_info, park_info = data_preprocessing(
+					train_data, test_data, interest_rate, subway_info, school_info, park_info = dl.load_raw_data()
+					train_data, test_data, interest_rate, subway_info, school_info, park_info = data_preprocessing(
 						train_data, test_data, interest_rate, subway_info, school_info, park_info)
 					train_data, test_data = feature_engineering(train_data, test_data, interest_rate, subway_info,
 																school_info, park_info)
@@ -59,11 +58,11 @@ def main():
 					print("==============================")
 					print('Data not found. Downloading...')
 					print("==============================")
-					download_data()
-					extract_data()
+					dl.download_data()
+					dl.extract_data()
 
-					train_data, test_data, interest_rate, subway_info, school_info, park_info = load_raw_data()
-					train_data, test_data, submission, interest_rate, subway_info, school_info, park_info = data_preprocessing(
+					train_data, test_data, interest_rate, subway_info, school_info, park_info = dl.load_raw_data()
+					train_data, test_data, interest_rate, subway_info, school_info, park_info = data_preprocessing(
 						train_data, test_data, interest_rate, subway_info, school_info, park_info)
 					train_data, test_data = feature_engineering(train_data, test_data, interest_rate, subway_info,
 																school_info, park_info)
@@ -78,6 +77,7 @@ def main():
 
 	y_test_pred = train_model(X_train, y_train, X_holdout, y_holdout, X_test, args.model, args.n_trials, args.n_jobs)
 
+	submission = dl.load_submission()
 	submission_to_csv(submission, y_test_pred, args.submission)
 
 

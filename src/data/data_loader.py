@@ -42,7 +42,6 @@ def load_preprocessed_data():
 
 	train_data = pd.read_csv('./data/preprocessed/train.csv')
 	test_data = pd.read_csv('./data/preprocessed/test.csv')
-	submission = pd.read_csv('./data/preprocessed/submission.csv')
 
 	# TODO: Load other preprocessed data
 	interest_rate = pd.read_csv('./data/raw/interestRate.csv')
@@ -52,7 +51,7 @@ def load_preprocessed_data():
 
 	print('Data Loaded')
 
-	return train_data, test_data, submission, interest_rate, subway_info, school_info, park_info
+	return train_data, test_data, interest_rate, subway_info, school_info, park_info
 
 
 def load_processed_features():
@@ -64,3 +63,13 @@ def load_processed_features():
 	print('Data Loaded')
 
 	return train_data, test_data
+
+
+def load_submission():
+	print('Loading Submission Data')
+
+	submission = pd.read_csv('./data/raw/sample_submission.csv')
+
+	print('Data Loaded')
+
+	return submission

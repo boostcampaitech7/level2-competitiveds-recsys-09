@@ -1,6 +1,7 @@
 import pandas as pd
 
-from src.preprocessing.remove_data import remove_duplicates, latlng_boundary_filter
+from src.preprocessing.remove_data import remove_duplicates, latlng_boundary_filter, remove_underrepresented, \
+	remove_outliers
 from src.preprocessing.split_data import split_year_month
 
 
@@ -10,6 +11,8 @@ def data_preprocessing(train_data, test_data, interest_rate, subway_info, school
 	print("==============================")
 
 	train_data = remove_duplicates(train_data)
+	train_data = remove_underrepresented(train_data, 5)
+	train_data = remove_outliers(train_data, 'deposit', 0.99)
 
 	test_data = test_data.drop(columns=['index'])
 	#  Merge interest rate data

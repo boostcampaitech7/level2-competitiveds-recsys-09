@@ -11,13 +11,7 @@ def data_preprocessing(train_data, test_data, interest_rate, subway_info, school
 
 	train_data = remove_duplicates(train_data)
 
-	# TODO: Remove Duplicates
-	# test_data = remove_duplicates(test_data)
 	test_data = test_data.drop(columns=['index'])
-	submission = test_data.copy()
-	submission['deposit'] = 0
-	submission = submission['deposit']
-
 	#  Merge interest rate data
 	train_data = pd.merge(train_data, interest_rate, left_on='contract_year_month', right_on='year_month', how='left')
 	train_data.drop(columns=['year_month'], inplace=True)
@@ -32,12 +26,14 @@ def data_preprocessing(train_data, test_data, interest_rate, subway_info, school
 	school_info = latlng_boundary_filter(school_info)
 	park_info = latlng_boundary_filter(park_info)
 
+	# Remove duplicates
+	park_info = park_info.loc[park_info.groupby(['latitude', 'longitude'])['area'].idxmax()]
+
 	print("==============================")
 	print('Data Preprocessed')
 	print("==============================")
 
 	train_data.to_csv('./data/preprocessed/train.csv', index=False)
 	test_data.to_csv('./data/preprocessed/test.csv', index=False)
-	submission.to_csv('./data/preprocessed/submission.csv', index=False)
 
-	return train_data, test_data, submission, interest_rate, subway_info, school_info, park_info
+	return train_data, test_data, interest_rate, subway_info, school_info, park_info

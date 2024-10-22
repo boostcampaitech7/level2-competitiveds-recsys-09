@@ -41,4 +41,38 @@ def transform_distances(data: pd.DataFrame, columns: list) -> pd.DataFrame:
 	for col in columns:
 		data[f'log_{col}'] = nearest_public_log_transform(data[col])
 
-	return data.drop(columns=columns)
+	return data
+
+
+def count_within_radius(df: pd.DataFrame, points: pd.DataFrame, radius=0.005):
+	"""
+	Count the number of points within the radius
+	:param df: (pd.DataFrame) Data
+	:param points: (pd.DataFrame) Target points
+	:param radius: (float) Radius
+	:return: (int) Count
+	"""
+	tree = BallTree(points[['latitude', 'longitude']], metric='haversine')
+	count = tree.query_radius(df[['latitude', 'longitude']], r=radius, count_only=True)
+	return count
+
+
+def nearest_school_count_with_type(data: pd.DataFrame, school_info: pd.DataFrame, elementary_distance=0.005,
+								   middle_distance=0.3, high_distance=0.3) -> pd.DataFrame:
+	"""
+	Count the number of schools with types within the distance
+	:param data: (pd.DataFrame) Data
+	:param school_info: (pd.DataFrame) School information
+	:param elementary_distance: (int) Elementary school distance
+	:param middle_distance: (int) Middle school distance
+	:param high_distance: (int) High school distance
+	:return: (pd.DataFrame) Data with school count columns
+	"""
+	data['elementary_school_count'] = count_within_radius(data, school_info[school_info['type'] == 'elementary'],
+														  radius=elementary_distance)
+	data['middle_school_count'] = count_within_radius(data, school_info[school_info['type'] == 'middle'],
+													  radius=middle_distance)
+	data['high_school_count'] = count_within_radius(data, school_info[school_info['type'] == 'high'],
+													radius=high_distance)
+
+	return data

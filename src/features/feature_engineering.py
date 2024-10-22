@@ -3,7 +3,7 @@ import time
 import numpy as np
 from sklearn.cluster import KMeans
 
-from src.features.nearest_public import calculate_nearst_distances, transform_distances
+from src.features.nearest_public import calculate_nearst_distances, transform_distances, nearest_school_count_with_type
 
 
 def feature_engineering(train_data, test_data, interest_rate, subway_info, school_info, park_info):
@@ -20,6 +20,9 @@ def feature_engineering(train_data, test_data, interest_rate, subway_info, schoo
 	distance_columns = ['subway_distance', 'school_distance', 'park_distance']
 	train_data = transform_distances(train_data, distance_columns)
 	test_data = transform_distances(test_data, distance_columns)
+
+	train_data = nearest_school_count_with_type(train_data, school_info)
+	test_data = nearest_school_count_with_type(test_data, school_info)
 
 	# TODO: Modularize
 	###

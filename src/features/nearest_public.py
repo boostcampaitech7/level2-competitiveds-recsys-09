@@ -10,9 +10,9 @@ def nearest_public_balltree(data: pd.DataFrame, points: pd.DataFrame) -> list:
 	:param points: (pd.DataFrame) Target points
 	:return: (list) Nearest distance
 	"""
-	tree = BallTree(points[['latitude', 'longitude']], metric='haversine')
-	distances, _ = tree.query(data[['latitude', 'longitude']], k=1)
-	return distances.flatten()
+	tree = BallTree(np.radians(points[['latitude', 'longitude']]), metric='haversine')
+	distances, _ = tree.query(np.radians(data[['latitude', 'longitude']]), k=1)
+	return distances.flatten() * 6371
 
 
 def calculate_nearst_distances(data: pd.DataFrame, facilities_info: dict) -> pd.DataFrame:

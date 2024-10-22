@@ -23,11 +23,12 @@ def main():
 						help='Model to train (default=lgb)')
 	parser.add_argument('--submission', type=str, default='output.csv',
 						help='Submission file name (default=output.csv)')
+	parser.add_argument('--process-only', action='store_true', help='Process data only')
 
 	args = parser.parse_args()
 
 	# TODO: !!!REFACTOR!!!
-	if args.force_reprocess:
+	if args.force_reprocess or args.process_only:
 		print("==============================")
 		print('Force reprocessing data')
 		print("==============================")
@@ -39,6 +40,8 @@ def main():
 			train_data, test_data, interest_rate, subway_info, school_info, park_info)
 		train_data, test_data = feature_engineering(train_data, test_data, interest_rate, subway_info,
 													school_info, park_info)
+		if args.process_only:
+			return
 	else:
 		try:
 			train_data, test_data = dl.load_processed_features()

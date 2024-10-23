@@ -1,7 +1,7 @@
 import pandas as pd
 
 from src.preprocessing.remove_data import remove_duplicates, latlng_boundary_filter, remove_quantile
-from src.preprocessing.split_data import split_year_month
+from src.preprocessing.split_data import split_year_month, continous_date
 
 
 def data_preprocessing(train_data, test_data, interest_rate, subway_info, school_info, park_info):
@@ -24,13 +24,19 @@ def data_preprocessing(train_data, test_data, interest_rate, subway_info, school
 
 	test_data = pd.merge(test_data, interest_rate, left_on='contract_year_month', right_on='year_month', how='left')
 	test_data.drop(columns=['year_month'], inplace=True)
+	test_data['interest_rate'] = test_data['interest_rate'].fillna(method='ffill')
 
-	
+	# [x] TODO: Unix time 적용 
+	'''	
 	train_data = split_year_month(train_data)
 	test_data = split_year_month(test_data)
- 
+	'''
+	train_data = continous_date(train_data)
+	test_data = continous_date(test_data)
+
+	# [ ] TODO: Find the best way to filter park data
 	# discard park data that less than 1,3 quantile
-	park_info = remove_quantile(park_info, 'area', 0.25, 0.75)
+	park_info = remove_quantile(park_info, 'area', 0.10, 0.90)
 
 	# 자르지 않는 것이 좋을 수도 있음
 	'''	
@@ -67,3 +73,8 @@ def data_preprocessing(train_data, test_data, interest_rate, subway_info, school
 	high_info.to_csv('./data/preprocessed/high_info.csv', index=False)
 
 	return train_data, test_data, submission, interest_rate, subway_info, elementary_info, middle_info, high_info, park_info
+
+
+# [x] TODO: 2024-06 부터는 interest rate가 없음
+
+

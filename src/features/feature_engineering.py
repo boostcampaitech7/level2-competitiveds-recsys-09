@@ -58,6 +58,7 @@ def feature_engineering(train_data, test_data, interest_rate, subway_info, eleme
 	###'''
 
 	# weight 설정
+	# [x] TODO: Epoch time 적용
 	weight = 2
 	print(f'Setting weight to {weight}')
 	train_data = set_weight(train_data, weight)
@@ -87,13 +88,13 @@ def feature_engineering(train_data, test_data, interest_rate, subway_info, eleme
 	nearest_centroid.fit(centroids, centroids.index)
 	test_data['region_cluster'] = nearest_centroid.predict(test_data[['latitude', 'longitude']])
 
-	columns_needed = ['deposit', 'area_m2', 'year', 'month', 'floor', 'latitude', 'longitude',
+	columns_needed = ['deposit', 'area_m2', 'contract_date_epoch', 'floor', 'latitude', 'longitude',
 						'subway_distance', 'elementary_distance', 'middle_distance', 'high_distance', 'park_distance', 
 						'subway_ID', 'elementary_ID', 'middle_ID', 'high_ID', 'park_ID',
 						'subway_count', 'elementary_count', 'middle_count', 'high_count', 'park_count',
 						'age', 'interest_rate', 'region_cluster', 'weight']
 
-	columns_needed_test = ['area_m2', 'year', 'month', 'floor', 'latitude', 'longitude',
+	columns_needed_test = ['area_m2', 'contract_date_epoch', 'floor', 'latitude', 'longitude',
 						'subway_distance', 'elementary_distance', 'middle_distance', 'high_distance', 'park_distance', 
 						'subway_ID', 'elementary_ID', 'middle_ID', 'high_ID', 'park_ID',
 						'subway_count', 'elementary_count', 'middle_count', 'high_count', 'park_count',

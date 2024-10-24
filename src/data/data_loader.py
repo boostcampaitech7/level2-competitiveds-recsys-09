@@ -24,8 +24,8 @@ def extract_data():
 def load_raw_data():
 	print('Loading Raw Data')
 
-	train_data = pd.read_csv('./data/raw/train.csv')
-	test_data = pd.read_csv('./data/raw/test.csv')
+	train_data = pd.read_csv('./data/raw/train_dist.csv')
+	test_data = pd.read_csv('./data/raw/test_dist.csv')
 	# submission = pd.read_csv('./data/raw/sample_submission.csv')
 	interest_rate = pd.read_csv('./data/raw/interestRate.csv')
 	subway_info = pd.read_csv('./data/raw/subwayInfo.csv')
@@ -58,8 +58,8 @@ def load_preprocessed_data():
 def load_processed_features():
 	print('Loading Processed Features')
 
-	train_data = pd.read_csv('./data/processed_features/train_data.csv')
-	test_data = pd.read_csv('./data/processed_features/test_data.csv')
+	train_data = pd.DataFrame(pd.read_csv('./data/processed_features/train_data.csv'))
+	test_data =  pd.DataFrame(pd.read_csv('./data/processed_features/test_data.csv'))
 
 	print('Data Loaded')
 

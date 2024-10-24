@@ -1,9 +1,11 @@
 import time
 
 import numpy as np
+import pandas as pd
 from sklearn.cluster import KMeans
-
 from src.features.nearest_public import calculate_nearst_distances, transform_distances
+from src.features.cluster_feature_add import perform_clustering_and_calculate_deposit
+from src.features.clustering import kmeans
 
 
 def feature_engineering(train_data, test_data, interest_rate, subway_info, school_info, park_info):
@@ -13,53 +15,63 @@ def feature_engineering(train_data, test_data, interest_rate, subway_info, schoo
 
 	start_time = time.time()
 
-	facilities_info = {'subway': subway_info, 'school': school_info, 'park': park_info}
-	train_data = calculate_nearst_distances(train_data, facilities_info)
-	test_data = calculate_nearst_distances(test_data, facilities_info)
+	n_clusters_list = [1500]
+	max_iters = 100
+	tol = 1e-6
+	train_data, test_data = perform_clustering_and_calculate_deposit(train_data, test_data, n_clusters_list, max_iters, tol)
 
-	distance_columns = ['subway_distance', 'school_distance', 'park_distance']
-	train_data = transform_distances(train_data, distance_columns)
-	test_data = transform_distances(test_data, distance_columns)
+	train_cluster_features = []
+	test_cluster_features = []
+	train_cluster_features.extend(train_data.columns[train_data.columns.str.contains(f'cluster_1500')])
+	test_cluster_features.extend(test_data.columns[test_data.columns.str.contains(f'cluster_1500')])
 
+	train_data['deposit_per_area'] = train_data['deposit'] / train_data['area_m2']
+	
 	# TODO: Modularize
 	###
-	train_area_m2_min = train_data[train_data['area_m2'] > 0]['area_m2'].min()
-	test_area_m2_min = test_data[test_data['area_m2'] > 0]['area_m2'].min()
-	train_data['log_area_m2'] = np.where(train_data['area_m2'] > 0, np.log1p(train_data['area_m2']), train_area_m2_min)
-	test_data['log_area_m2'] = np.where(test_data['area_m2'] > 0, np.log1p(test_data['area_m2']), test_area_m2_min)
+	train = pd.read_csv('./data/preprocessed/train.csv')
+	test = pd.read_csv('./data/preprocessed/test.csv')
 
-	train_floor_min = train_data[train_data['floor'] > 0]['floor'].min()
-	test_floor_min = test_data[test_data['floor'] > 0]['floor'].min()
-	train_data['log_floor'] = np.where(train_data['floor'] > 0, np.log1p(train_data['floor']), train_floor_min)
-	test_data['log_floor'] = np.where(test_data['floor'] > 0, np.log1p(test_data['floor']), test_floor_min)
+	'''	train_data['nearest_subway_distance'] = train['nearest_subway_distance']
+	train_data['nearest_school_distance'] = train['nearest_school_distance']
+	train_data['nearest_park_distance'] = train['nearest_park_distance']
 
-	train_age_min = train_data[train_data['age'] > 0]['age'].min()
-	test_age_min = test_data[test_data['age'] > 0]['age'].min()
-	train_data['log_age'] = np.where(train_data['age'] > 0, np.log1p(train_data['age']), train_age_min)
-	test_data['log_age'] = np.where(test_data['age'] > 0, np.log1p(test_data['age']), test_age_min)
+	test_data['nearest_subway_distance'] = test['nearest_subway_distance']
+	test_data['nearest_school_distance'] = test['nearest_school_distance']
+	test_data['nearest_park_distance'] = test['nearest_park_distance']'''
 
-	train_data = train_data.drop(columns=['area_m2', 'floor', 'age'])
-	test_data = test_data.drop(columns=['area_m2', 'floor', 'age'])
 
-	# K-Means Clustering
-	kmeans = KMeans(n_clusters=100, random_state=42)
-	train_data['region_cluster'] = kmeans.fit_predict(train_data[['latitude', 'longitude']])
-	test_data['region_cluster'] = kmeans.predict(test_data[['latitude', 'longitude']])
+	train_nearest_subway_distance_min = train['nearest_subway_distance'].min()
+	train_nearest_school_distance_min = train['nearest_school_distance'].min()
+	train_nearest_park_distance_min = train['nearest_park_distance'].min()
 
-	# Rolling Average
-	train_data['interest_rate_3mo_avg'] = train_data['interest_rate'].rolling(window=3).mean()
-	test_data['interest_rate_3mo_avg'] = test_data['interest_rate'].rolling(window=3).mean()
-	###
+	train_data['log_nearest_subway_distance'] = np.where(train['nearest_subway_distance'] > 0, train['nearest_subway_distance'], train_nearest_subway_distance_min)
+	train_data['log_nearest_school_distance'] = np.where(train['nearest_school_distance'] > 0, train['nearest_school_distance'], train_nearest_school_distance_min)
+	train_data['log_nearest_park_distance'] = np.where(train['nearest_park_distance'] > 0, train['nearest_park_distance'], train_nearest_park_distance_min)
 
-	columns_needed = ['deposit', 'log_area_m2', 'year', 'month', 'log_floor', 'latitude', 'longitude',
-					  'log_subway_distance', 'log_school_distance', 'log_park_distance', 'log_age', 'region_cluster',
-					  'interest_rate_3mo_avg']
-	columns_needed_test = ['log_area_m2', 'year', 'month', 'log_floor', 'latitude', 'longitude',
-						   'log_subway_distance', 'log_school_distance', 'log_park_distance', 'log_age',
-						   'region_cluster', 'interest_rate_3mo_avg']
+	test_nearest_subway_distance_min = test['nearest_subway_distance'].min()
+	test_nearest_school_distance_min = test['nearest_school_distance'].min()
+	test_nearest_park_distance_min = test['nearest_park_distance'].min()
 
-	train_data = train_data[columns_needed]
-	test_data = test_data[columns_needed_test]
+	test_data['log_nearest_subway_distance'] = np.where(test['nearest_subway_distance'] > 0, test['nearest_subway_distance'], test_nearest_subway_distance_min)
+	test_data['log_nearest_school_distance'] = np.where(test['nearest_school_distance'] > 0, test['nearest_school_distance'], test_nearest_school_distance_min)
+	test_data['log_nearest_park_distance'] = np.where(test['nearest_park_distance'] > 0, test['nearest_park_distance'], test_nearest_park_distance_min)
+	
+	train_data['contract_year_month_day'] = train_data["contract_year_month"] * 100 + train_data["contract_day"]
+	test_data['contract_year_month_day'] = test_data["contract_year_month"] * 100 + test_data["contract_day"]
+	train_data.drop(columns=['contract_year_month', 'contract_day'], inplace=True)
+	test_data.drop(columns=['contract_year_month', 'contract_day'], inplace=True)
+
+	print(train_data.head())
+	columns_needed_test = ['contract_year_month_day', 'floor', 'latitude', 'longitude','age', 'area_m2', 
+				   		'log_nearest_subway_distance', 'log_nearest_school_distance', 'log_nearest_park_distance'
+						] + train_cluster_features
+	columns_needed = columns_needed_test + ['deposit_per_area']
+	
+	train_data = train_data[columns_needed].sort_values('contract_year_month_day')
+	test_data =	test_data[columns_needed_test]
+	#train_data = train_data[columns_needed]
+	#test_data = test_data[columns_needed_test]
 
 	print(f"\nFeature Engineering took {time.time() - start_time:.2f} seconds\n")
 

@@ -59,6 +59,7 @@ def transform_sqrt_distances(data: pd.DataFrame, columns: list) -> pd.DataFrame:
 
 	return data
 
+
 def count_within_radius(df: pd.DataFrame, points: pd.DataFrame, radius=1):
 	"""
 	Count the number of points within the radius
@@ -68,7 +69,7 @@ def count_within_radius(df: pd.DataFrame, points: pd.DataFrame, radius=1):
 	:return: (int) Count
 	"""
 	tree = BallTree(np.radians(points[['latitude', 'longitude']]), metric='haversine')
-	count = tree.query_radius(np.radians(df[['latitude', 'longitude']]), r=radius, count_only=True)
+	count = tree.query_radius(np.radians(df[['latitude', 'longitude']]), r=radius / 6371, count_only=True)
 	return count
 
 

@@ -3,7 +3,8 @@ import time
 import numpy as np
 from sklearn.cluster import KMeans
 
-from src.features.nearest_public import calculate_nearst_distances, transform_sqrt_distances, nearest_school_count_with_type
+from src.features.nearest_public import calculate_nearst_distances, transform_sqrt_distances, \
+	nearest_school_count_with_type
 
 
 def feature_engineering(train_data, test_data, interest_rate, subway_info, school_info, park_info):
@@ -43,25 +44,24 @@ def feature_engineering(train_data, test_data, interest_rate, subway_info, schoo
 	train_data['log_age'] = np.where(train_data['age'] > 0, np.log1p(train_data['age']), train_age_min)
 	test_data['log_age'] = np.where(test_data['age'] > 0, np.log1p(test_data['age']), test_age_min)
 
-	train_data = train_data.drop(columns=['area_m2', 'floor', 'age'])
-	test_data = test_data.drop(columns=['area_m2', 'floor', 'age'])
-
 	# K-Means Clustering
-	kmeans = KMeans(n_clusters=100, random_state=42)
+	kmeans = KMeans(n_clusters=1000, random_state=42)
 	train_data['region_cluster'] = kmeans.fit_predict(train_data[['latitude', 'longitude']])
 	test_data['region_cluster'] = kmeans.predict(test_data[['latitude', 'longitude']])
 
 	# Rolling Average
 	train_data['interest_rate_3mo_avg'] = train_data['interest_rate'].rolling(window=3).mean()
 	test_data['interest_rate_3mo_avg'] = test_data['interest_rate'].rolling(window=3).mean()
+	test_data['interest_rate_3mo_avg'].fillna(train_data['interest_rate_3mo_avg'].mean(), inplace=True)
 	###
 
 	columns_needed = ['deposit', 'log_area_m2', 'year', 'month', 'log_floor', 'latitude', 'longitude',
 					  'sqrt_subway_distance', 'sqrt_school_distance', 'sqrt_park_distance', 'log_age', 'region_cluster',
-					  'interest_rate_3mo_avg']
+					  'interest_rate_3mo_avg', 'elementary_school_count', 'middle_school_count', 'high_school_count']
 	columns_needed_test = ['log_area_m2', 'year', 'month', 'log_floor', 'latitude', 'longitude',
 						   'sqrt_subway_distance', 'sqrt_school_distance', 'sqrt_park_distance', 'log_age',
-						   'region_cluster', 'interest_rate_3mo_avg']
+						   'region_cluster', 'interest_rate_3mo_avg', 'elementary_school_count', 'middle_school_count',
+						   'high_school_count']
 
 	train_data = train_data[columns_needed]
 	test_data = test_data[columns_needed_test]

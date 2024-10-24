@@ -32,6 +32,8 @@ def data_preprocessing(train_data, test_data, interest_rate, subway_info, school
 	# Remove duplicates
 	park_info = park_info.loc[park_info.groupby(['latitude', 'longitude'])['area'].idxmax()]
 
+	train_data = train_data.sort_values(by=['year', 'month'])
+
 	print("==============================")
 	print('Data Preprocessed')
 	print("==============================")

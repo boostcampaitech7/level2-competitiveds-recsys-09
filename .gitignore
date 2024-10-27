@@ -12,8 +12,10 @@
 /catboost_info
 
 # notebooks
-test.ipynb
-tmp.ipynb
+*.ipynb
 
 # results
 submission_cb.csv
+
+# wandb
+wandb

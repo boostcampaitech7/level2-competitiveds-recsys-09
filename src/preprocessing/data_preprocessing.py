@@ -1,7 +1,7 @@
 import pandas as pd
 
-from src.preprocessing.remove_data import remove_duplicates, latlng_boundary_filter, remove_quantile
-from src.preprocessing.split_data import split_year_month, continous_date
+from src.preprocessing.remove_data import remove_duplicates, latlng_boundary_filter
+from src.preprocessing.split_data import split_year_month
 
 
 def data_preprocessing(train_data, test_data, interest_rate, subway_info, school_info, park_info):
@@ -17,6 +17,9 @@ def data_preprocessing(train_data, test_data, interest_rate, subway_info, school
 	submission = test_data.copy()
 	submission['deposit'] = 0
 	submission = submission['deposit']
+	
+	train_data["age"] = train_data["age"].abs()
+	test_data["age"] = test_data["age"].abs()
 
 	#  Merge interest rate data
 	train_data = pd.merge(train_data, interest_rate, left_on='contract_year_month', right_on='year_month', how='left')
@@ -24,42 +27,13 @@ def data_preprocessing(train_data, test_data, interest_rate, subway_info, school
 
 	test_data = pd.merge(test_data, interest_rate, left_on='contract_year_month', right_on='year_month', how='left')
 	test_data.drop(columns=['year_month'], inplace=True)
-	test_data['interest_rate'] = test_data['interest_rate'].fillna(method='ffill')
 
-	# [x] TODO: Unix time 적용 
-	'''	
 	train_data = split_year_month(train_data)
 	test_data = split_year_month(test_data)
-	'''
-	train_data = continous_date(train_data)
-	test_data = continous_date(test_data)
 
-	# [ ] TODO: Find the best way to filter park data
-	# discard park data that less than 1,3 quantile
-	park_info = remove_quantile(park_info, 'area', 0.10, 0.90)
-
-	# 자르지 않는 것이 좋을 수도 있음
-	'''	
- 	subway_info = latlng_boundary_filter(subway_info)
+	subway_info = latlng_boundary_filter(subway_info)
 	school_info = latlng_boundary_filter(school_info)
 	park_info = latlng_boundary_filter(park_info)
-	'''
-	# divide school_info by schoolLevel (elementary_info, middle_info, high_info) 
-	school_info['schoolLevel'] = school_info['schoolLevel'].str.lower()
-	elementary_info = school_info[school_info['schoolLevel'] == 'elementary']
-	middle_info = school_info[school_info['schoolLevel'] == 'middle']
-	high_info = school_info[school_info['schoolLevel'] == 'high']
-	
-	# reset index 
-	elementary_info = elementary_info.reset_index(drop=True)
-	middle_info = middle_info.reset_index(drop=True)
-	high_info = high_info.reset_index(drop=True)
-
-	elementary_info['ID'] = elementary_info.index
-	middle_info['ID'] = middle_info.index
-	high_info['ID'] = high_info.index
-	park_info['ID'] = park_info.index
-	subway_info['ID'] = subway_info.index
 
 	print("==============================")
 	print('Data Preprocessed')
@@ -68,13 +42,5 @@ def data_preprocessing(train_data, test_data, interest_rate, subway_info, school
 	train_data.to_csv('./data/preprocessed/train.csv', index=False)
 	test_data.to_csv('./data/preprocessed/test.csv', index=False)
 	submission.to_csv('./data/preprocessed/submission.csv', index=False)
-	elementary_info.to_csv('./data/preprocessed/elementary_info.csv', index=False)
-	middle_info.to_csv('./data/preprocessed/middle_info.csv', index=False)
-	high_info.to_csv('./data/preprocessed/high_info.csv', index=False)
 
-	return train_data, test_data, submission, interest_rate, subway_info, elementary_info, middle_info, high_info, park_info
-
-
-# [x] TODO: 2024-06 부터는 interest rate가 없음
-
-
+	return train_data, test_data, submission, interest_rate, subway_info, school_info, park_info

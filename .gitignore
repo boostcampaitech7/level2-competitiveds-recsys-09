@@ -1,21 +1,17 @@
 # raw data
 /data/raw/*.csv
+
+# data
 /data
 
 # baseline code
 /notebooks/baseline.ipynb
 
+# all notebooks
+/notebooks/*.ipynb
+
 # PyCharm
 /.idea
 
-# catboost
-/catboost_info
-
-# notebooks
-*.ipynb
-
-# results
-submission_cb.csv
-
-# wandb
-wandb
+#vscode
+__pycache__

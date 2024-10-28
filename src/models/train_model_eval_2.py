@@ -33,9 +33,6 @@ def train_and_evaluate_models_2(X_train: DataFrame, y_train: DataFrame, X_holdou
 	lgb_best_params, lgb_preds = optimize_lgb(X_train, y_train, X_holdout, y_holdout, n_trials=n_trials, n_jobs=n_jobs)
 	xgb_best_params, xgb_preds = optimize_xgb(X_train, y_train, X_holdout, y_holdout, n_trials=n_trials, n_jobs=n_jobs, batch=False)
 	cb_best_params, cb_preds = optimize_catboost(X_train, y_train, X_holdout, y_holdout, n_trials=n_trials, n_jobs=n_jobs, batch=False)
-
-    # TODO: yaml 파일로 저장
-    
     
 
 	print(f"Model Training took {time.time() - start_time:.2f} seconds")

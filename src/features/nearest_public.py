@@ -43,6 +43,21 @@ def transform_distances(data: pd.DataFrame, columns: list) -> pd.DataFrame:
 
 	return data.drop(columns=columns)
 
+def nearest_public_sqrt_transform(distance: pd.Series) -> pd.Series:
+	"""
+	Calculate the square root transform of the column
+	:param distance: (pd.Series) nearest Public facility distance
+	:return: (pd.Series) Square root transformed column
+	"""
+	return np.sqrt(distance)
+
+
+def transform_sqrt_distances(data: pd.DataFrame, columns: list) -> pd.DataFrame:
+	for col in columns:
+		data[f'sqrt_{col}'] = nearest_public_sqrt_transform(data[col])
+
+	return data
+
 def nearest_public_balltree_with_count_id(data: pd.DataFrame, points: pd.DataFrame) -> list:
 	"""
 	Find the nearest public facility using BallTree

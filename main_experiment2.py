@@ -23,16 +23,8 @@ def main():
 	parser.add_argument('--n-jobs', type=int, default=1,
 						help='Number of CPU threads for hyperparameter optimization (default=1)')
 	parser.add_argument('--model', type=str, default='lgb', choices=['lgb', 'xgb'], help='Model to train (default=lgb)')
-	parser.add_argument('--experiment-idx', type=int, default=1, help='Experiment index (defualt=1)')
 
 	args = parser.parse_args()
-	
-	if args.experiment_idx == 1:
-		pass
-		# feature_engineering = feature_engineering1
-	else:
-		feature_engineering = feature_engineering2
-	
 
 	# TODO: !!!REFACTOR!!!
 	if args.force_reprocess:
@@ -45,7 +37,7 @@ def main():
 		train_data, test_data, interest_rate, subway_info, school_info, park_info = load_raw_data()
 		train_data, test_data, submission, interest_rate, subway_info, school_info, park_info = data_preprocessing(
 			train_data, test_data, interest_rate, subway_info, school_info, park_info)
-		train_data, test_data = feature_engineering(train_data, test_data, interest_rate, subway_info,
+		train_data, test_data = feature_engineering2(train_data, test_data, interest_rate, subway_info,
 													school_info, park_info)
 	else:
 		try:
@@ -54,7 +46,7 @@ def main():
 		except FileNotFoundError:
 			try:
 				train_data, test_data, submission, interest_rate, subway_info, school_info, park_info = load_preprocessed_data()
-				train_data, test_data = feature_engineering(train_data, test_data, interest_rate, subway_info,
+				train_data, test_data = feature_engineering2(train_data, test_data, interest_rate, subway_info,
 															school_info,
 															park_info)
 			except FileNotFoundError:
@@ -62,7 +54,7 @@ def main():
 					train_data, test_data, interest_rate, subway_info, school_info, park_info = load_raw_data()
 					train_data, test_data, submission, interest_rate, subway_info, school_info, park_info = data_preprocessing(
 						train_data, test_data, interest_rate, subway_info, school_info, park_info)
-					train_data, test_data = feature_engineering(train_data, test_data, interest_rate, subway_info,
+					train_data, test_data = feature_engineering2(train_data, test_data, interest_rate, subway_info,
 																school_info, park_info)
 				except FileNotFoundError:
 					print("==============================")
@@ -74,7 +66,7 @@ def main():
 					train_data, test_data, interest_rate, subway_info, school_info, park_info = load_raw_data()
 					train_data, test_data, submission, interest_rate, subway_info, school_info, park_info = data_preprocessing(
 						train_data, test_data, interest_rate, subway_info, school_info, park_info)
-					train_data, test_data = feature_engineering(train_data, test_data, interest_rate, subway_info,
+					train_data, test_data = feature_engineering2(train_data, test_data, interest_rate, subway_info,
 																school_info, park_info)
 
 	holdout_data, without_holdout_data = get_holdout_data(train_data)

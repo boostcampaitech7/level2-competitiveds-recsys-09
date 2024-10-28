@@ -43,14 +43,15 @@ def objective(trial, X_train: DataFrame, y_train: DataFrame, X_holdout: DataFram
 	"""
 	params = {
 		'objective': 'regression',
-		'metric': 'mae',
+		'metric': ['mae', 'rmse'],
 		'random_state': RANDOM_SEED,
 		'learning_rate': trial.suggest_float('learning_rate', 1e-3, 1e-1),
-		'n_estimators': trial.suggest_int('n_estimators', 50, 500),
-		'num_leaves': trial.suggest_int('num_leaves', 10, 150),
+		'n_estimators': trial.suggest_int('n_estimators', 50, 2000),
+		'num_leaves': trial.suggest_int('num_leaves', 10, 1000),
 		'max_depth': trial.suggest_int('max_depth', 3, 30),
-		'min_child_samples': trial.suggest_int('min_child_samples', 1, 100),
-		'subsample': trial.suggest_float('subsample', 0.1, 1.0),
+		'lambda_l1': trial.suggest_float('lambda_l1', 1e-8, 10.0, log=True),
+		'lambda_l2': trial.suggest_float('lambda_l2', 1e-8, 10.0, log=True),
+		'verbose': -1,
 	}
 
 	lgb_model = lgb.LGBMRegressor(**params)

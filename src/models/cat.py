@@ -44,9 +44,7 @@ def objective(trial, X_train: DataFrame, y_train: DataFrame, X_holdout: DataFram
 	params = {
 		'random_state': RANDOM_SEED,
 		'learning_rate': trial.suggest_float('learning_rate', 1e-3, 1e-1),
-		'n_estimators': trial.suggest_int('n_estimators', 50, 500),
-		'max_depth': trial.suggest_int('max_depth', 3, 16),
-		'min_child_samples': trial.suggest_int('min_child_samples', 1, 100),
+		'n_estimators': trial.suggest_int('n_estimators', 50, 2000),
 		'subsample': trial.suggest_float('subsample', 0.1, 1.0),
 	}
 

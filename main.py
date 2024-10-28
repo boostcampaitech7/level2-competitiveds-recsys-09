@@ -19,7 +19,7 @@ def main():
 						help='Number of trials for hyperparameter optimization (default=100)')
 	parser.add_argument('--n-jobs', type=int, default=1,
 						help='Number of CPU threads for hyperparameter optimization (default=1)')
-	parser.add_argument('--model', type=str, default='lgb', choices=['lgb', 'xgb', 'cat'],
+	parser.add_argument('--model', type=str, default='lgb', choices=['lgb', 'xgb', 'cat', 'ensemble'],
 						help='Model to train (default=lgb)')
 	parser.add_argument('--submission', type=str, default='output.csv',
 						help='Submission file name (default=output.csv)')

@@ -4,6 +4,8 @@ from numpy import ndarray
 from pandas import DataFrame
 import time
 import xgboost as xgb
+from sklearn.ensemble import StackingRegressor
+from sklearn.linear_model import Ridge
 
 from src.models.cat import optimize_cat
 from src.models.lgb import optimize_lgb
@@ -43,6 +45,20 @@ def train_model(X_train: DataFrame, y_train: DataFrame, X_holdout: DataFrame, y_
 	elif model == 'cat':
 		best_params = optimize_cat(X_train, y_train, X_holdout, y_holdout, n_trials=n_trials, n_jobs=n_jobs)
 		final_model = CatBoostRegressor(**best_params)
+		final_model.fit(X_train, y_train)
+
+	elif model == 'ensemble':
+		lgb_model = lgb.LGBMRegressor(
+			**optimize_lgb(X_train, y_train, X_holdout, y_holdout, n_trials=n_trials, n_jobs=n_jobs), n_jobs=n_jobs)
+		xgb_model = xgb.XGBRegressor(
+			**optimize_xgb(X_train, y_train, X_holdout, y_holdout, n_trials=n_trials, n_jobs=n_jobs), n_jobs=n_jobs)
+		cat_model = CatBoostRegressor(
+			**optimize_cat(X_train, y_train, X_holdout, y_holdout, n_trials=n_trials, n_jobs=n_jobs))
+
+		# Stacking ensemble with Ridge as metamodel
+		estimators = [('lgb', lgb_model), ('xgb', xgb_model), ('cat', cat_model)]
+		final_model = StackingRegressor(estimators=estimators, final_estimator=Ridge())
+
 		final_model.fit(X_train, y_train)
 
 	else:

@@ -50,11 +50,11 @@ def feature_engineering2(train_data: DataFrame, test_data: DataFrame, interest_r
 	test_data = one_hot_encoding(test_data, ['region_cluster'])
 	test_data = fit_columns_of_train_and_test(train_data, test_data)
 
-	columns_needed = ['deposit_per_area', 'area_m2', 'built_year', 'latitude', 'longitude',
+	columns_needed = ['deposit_per_area', 'year', 'month', 'area_m2', 'built_year', 'latitude', 'longitude',
 					  'sqrt_subway_distance', 'sqrt_school_distance', 'sqrt_park_distance', 
 					  'nearest_subway_id', 'nearest_school_id', 'nearest_park_id', 'interest_rate',
 					  'contract_timestamp_scaled', 'final_price', 'age_weight'] + [f'region_cluster_{i}' for i in range(100)]
-	columns_needed_test = ['area_m2', 'built_year', 'latitude', 'longitude',
+	columns_needed_test = ['year', 'month', 'area_m2', 'built_year', 'latitude', 'longitude',
 					  'sqrt_subway_distance', 'sqrt_school_distance', 'sqrt_park_distance', 
 					  'nearest_subway_id', 'nearest_school_id', 'nearest_park_id', 'interest_rate',
 					  'contract_timestamp_scaled', 'final_price', 'age_weight'] + [f'region_cluster_{i}' for i in range(100)]

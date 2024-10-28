@@ -22,7 +22,6 @@ def main():
 						help='Number of trials for hyperparameter optimization (default=100)')
 	parser.add_argument('--n-jobs', type=int, default=1,
 						help='Number of CPU threads for hyperparameter optimization (default=1)')
-	parser.add_argument('--model', type=str, default='lgb', choices=['lgb', 'xgb'], help='Model to train (default=lgb)')
 
 	args = parser.parse_args()
 

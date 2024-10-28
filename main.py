@@ -1,10 +1,12 @@
 import argparse
 import numpy as np
 
+from models.SLSQP import optimize_weights
+from models.train_model_eval_2 import train_and_evaluate_models_2
 from src.data.data_loader import download_data, extract_data, load_raw_data, load_preprocessed_data, \
 	load_processed_features
 from src.evaluation.holdout import get_holdout_data
-from src.features.feature_engineering import feature_engineering
+from src.features.feature_engineering2 import feature_engineering2
 from src.models.train_model import train_model
 from src.preprocessing.data_preprocessing import data_preprocessing
 from src.utils.submission import submission_to_csv
@@ -21,8 +23,16 @@ def main():
 	parser.add_argument('--n-jobs', type=int, default=1,
 						help='Number of CPU threads for hyperparameter optimization (default=1)')
 	parser.add_argument('--model', type=str, default='lgb', choices=['lgb', 'xgb'], help='Model to train (default=lgb)')
+	parser.add_argument('--experiment-idx', type=int, default=1, help='Experiment index (defualt=1)')
 
 	args = parser.parse_args()
+	
+	if args.experiment_idx == 1:
+		pass
+		# feature_engineering = feature_engineering1
+	else:
+		feature_engineering = feature_engineering2
+	
 
 	# TODO: !!!REFACTOR!!!
 	if args.force_reprocess:
@@ -67,16 +77,24 @@ def main():
 					train_data, test_data = feature_engineering(train_data, test_data, interest_rate, subway_info,
 																school_info, park_info)
 
-	holdout_data, train_data = get_holdout_data(train_data)
+	holdout_data, without_holdout_data = get_holdout_data(train_data)
 
-	X_train = train_data.drop(columns=['deposit'])
-	y_train = train_data['deposit']
-	X_holdout = holdout_data.drop(columns=['deposit'])
-	y_holdout = holdout_data['deposit']
+	X_train = without_holdout_data.drop(columns=['deposit_per_area', 'year', 'month'])
+	y_train = without_holdout_data['deposit_per_area']
+	X_holdout = holdout_data.drop(columns=['deposit_per_area', 'year', 'month'])
+	y_holdout = holdout_data['deposit_per_area']
 	X_test = test_data.copy()
 
-	y_test_pred = train_model(X_train, y_train, X_holdout, y_holdout, X_test, args.model, args.n_trials, args.n_jobs)
-
+    # holdout 데이터로 모델 학습 및 예측
+	lgb_best_params, xgb_best_params, cb_best_params, lgb_preds, xgb_preds, cb_preds = train_and_evaluate_models_2(X_train, y_train, X_holdout, y_holdout, X_test, args.model, args.n_trials, args.n_jobs)
+	
+    # 전체 데이터로 모델 학습 및 예측
+	lgb_test_pred_origin, xgb_test_pred_origin, cat_test_pred_origin = train_and_evaluate_models_2(X_train, y_train, X_test, lgb_best_params, xgb_best_params, cb_best_params)
+	
+    # 앙상블 진행
+	ensemble_weight, fun = optimize_weights(X_holdout, y_holdout, lgb_preds, xgb_preds, cb_preds)
+	y_test_pred = ensemble_weight[0] * lgb_test_pred_origin + ensemble_weight[1] * xgb_test_pred_origin + ensemble_weight[2] * cat_test_pred_origin
+	
 	submission_to_csv(submission, y_test_pred)
 
 

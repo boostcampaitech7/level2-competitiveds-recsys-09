@@ -50,6 +50,7 @@ deposit_prediction
     │   ├── cluster_deposit_per_area.py # 클러스터별 평당 평균 가격 계산 및 feature 추가
     │   ├── cluster_feature_add.py      # 수행한 결과 리턴
     │   ├── weight.py                   # 특정 데이터에 가중치 열 추가
+    │   ├── age_weight.py               # age를 구간별로 나누어 weight를 추가
     │   ├── feature_engineering.py
     │   └── nearest_public.py
     ├── models

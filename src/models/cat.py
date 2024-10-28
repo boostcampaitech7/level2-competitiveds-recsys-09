@@ -2,6 +2,32 @@ import optuna
 from catboost import CatBoostRegressor, Pool
 from sklearn.metrics import mean_absolute_error
 from pandas import DataFrame
+from numpy import ndarray
+
+from src.utils.variables import RANDOM_SEED
+
+def train_catboost(X_train: DataFrame, y_train: DataFrame, X_holdout: DataFrame, y_holdout: DataFrame, params: dict, batch: bool) -> CatBoostRegressor:
+    """
+    Train CatBoost model using the best hyperparameters
+    :param X_train: (DataFrame) Feature data for training
+    :param y_train: (DataFrame) Target data for training
+    :param X_holdout: (DataFrame) Feature data for holdout
+    :param y_holdout: (DataFrame) Target data for holdout
+    :param params: (dict) Best hyperparameters
+    :return: (CatBoostRegressor) Trained CatBoost model
+    """
+    print('==============================')
+    print('Training CatBoost')
+    print('==============================')
+    
+    if batch:
+        cat_model = train_cat_in_batches_full_data(X_train, y_train, params)
+    else:
+        cat_model = CatBoostRegressor(**params)
+        cat_model.fit(X_train, y_train, eval_set=(X_holdout, y_holdout), verbose=False)
+    
+    return cat_model
+
 '''
 optimize_catboost: Optuna를 사용하여 CatBoost 모델의 최적 하이퍼파라미터를 찾는 함수입니다.
 objective_catboost: CatBoost의 Optuna 최적화 목적 함수로, MAE를 기준으로 평가합니다.
@@ -9,8 +35,8 @@ train_catboost_in_batches_for_holdout: 배치 학습을 통해 CatBoost 모델�
 train_final_model: 최적의 하이퍼파라미터로 전체 데이터를 사용해 CatBoost 모델을 최종 학습하는 함수입니다.
 '''
 def optimize_catboost(
-    X_train: DataFrame, y_train: DataFrame, X_holdout: DataFrame, y_holdout: DataFrame, n_trials=50, n_jobs=1
-) -> dict:
+    X_train: DataFrame, y_train: DataFrame, X_holdout: DataFrame, y_holdout: DataFrame, n_trials=50, n_jobs=1, batch=True
+) -> (dict, ndarray):
     """
     Optuna를 사용하여 CatBoost 하이퍼파라미터를 최적화하는 함수
     :param X_train: (DataFrame) 학습용 특성 데이터
@@ -19,6 +45,7 @@ def optimize_catboost(
     :param y_holdout: (DataFrame) 검증용 타겟 데이터
     :param n_trials: (int) 최적화 시도 횟수, 기본값=50
     :param n_jobs: (int) 병렬 작업 수, 기본값=1
+    :param batch: (bool) 배치 학습 사용 여부, 기본값=True
     :return: (dict) 최적의 하이퍼파라미터
     """
     print('==============================')
@@ -27,17 +54,20 @@ def optimize_catboost(
     
     # Optuna 스터디 생성 및 최적화 수행
     study = optuna.create_study(direction='minimize')
-    study.optimize(lambda trial: objective_catboost(trial, X_train, y_train, X_holdout, y_holdout), 
+    study.optimize(lambda trial: objective_catboost(trial, X_train, y_train, X_holdout, y_holdout, batch), 
                    n_trials=n_trials, n_jobs=n_jobs)
 
     print(f'Best trial: {study.best_trial.value}')
     print(f'Best params: {study.best_params}')
     
-    return study.best_params
+    catboost_model = train_catboost(X_train, y_train, X_holdout, y_holdout, study.best_params, batch)
+    preds = catboost_model.predict(X_holdout)
+    
+    return study.best_params, preds * X_holdout['area_m2']
 
 
 def objective_catboost(
-    trial, X_train: DataFrame, y_train: DataFrame, X_holdout: DataFrame, y_holdout: DataFrame
+    trial, X_train: DataFrame, y_train: DataFrame, X_holdout: DataFrame, y_holdout: DataFrame, batch: bool
 ) -> float:
     """
     CatBoost의 Optuna 최적화 목적 함수
@@ -46,45 +76,29 @@ def objective_catboost(
     :param y_train: (DataFrame) 학습용 타겟 데이터
     :param X_holdout: (DataFrame) 검증용 특성 데이터
     :param y_holdout: (DataFrame) 검증용 타겟 데이터
+    :param batch: (bool) 배치 학습 사용 여부
     :return: (float) MAE 평가 지표
     """
     # 최적화할 하이퍼파라미터 정의
     params = {
-        'iterations': trial.suggest_int('iterations', 50, 200),
-        'learning_rate': trial.suggest_loguniform('learning_rate', 1e-4, 0.1),
-        'depth': trial.suggest_int('depth', 4, 12),
         'random_seed': 42,
         'loss_function': 'MAE',
-        'verbose': False
+        'verbose': False,
+        'iterations': 1000,
+        'learning_rate': trial.suggest_float('learning_rate', 1e-4, 0.1, log=True),
+        'depth': trial.suggest_int('depth', 4, 12),
+        'l2_leaf_reg': trial.suggest_float('l2_leaf_reg', 1e-8, 100.0, log=True),
+        'random_strength': trial.suggest_int('random_strength', 1, 20),
+        'bagging_temperature': trial.suggest_float('bagging_temperature', 1e-8, 100.0, log=True),
+        'border_count': trial.suggest_int('border_count', 1, 255),
     }
     
-    # CatBoost 모델 초기화
-    cat_model = CatBoostRegressor(**params)
-
-    # 배치 학습 파라미터
-    batch_num = 30
-    batch_size = len(X_train) // batch_num
+    catboost_model = train_catboost(X_train, y_train, X_holdout, y_holdout, params, batch)
+    preds = catboost_model.predict(X_holdout)
     
-    for i in range(0, len(X_train), batch_size):
-        X_batch = X_train[i:i + batch_size]
-        y_batch = y_train[i:i + batch_size]
-
-        # CatBoost Pool 생성
-        train_pool = Pool(X_batch, y_batch)
-        
-        if i == 0:
-            # 첫 번째 배치에서 모델 초기화 및 학습
-            cat_model.fit(train_pool)
-        else:
-            # 이후 배치에서는 이전 모델에 이어서 학습
-            cat_model.fit(train_pool, init_model=cat_model)
-    
-    # 검증 데이터로 평가
-    valid_pool = Pool(X_holdout, y_holdout)
-    preds = cat_model.predict(valid_pool)
-    
-    # MAE 평가 지표 계산
-    mae = mean_absolute_error(y_holdout, preds)
+    y_pred_valid_origin = preds * X_holdout['area_m2']
+    y_valid_origin = y_holdout * X_holdout['area_m2']
+    mae = mean_absolute_error(y_valid_origin, y_pred_valid_origin)
     
     return mae
 

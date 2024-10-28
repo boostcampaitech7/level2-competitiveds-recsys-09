@@ -1,4 +1,5 @@
 import argparse
+import yaml
 import pandas as pd
 from src.data.data_loader import download_data, extract_data, load_raw_data, load_preprocessed_data
 from src.features.feature_engineering_1 import feature_engineering
@@ -6,51 +7,32 @@ from src.models.train_model_eval import train_and_evaluate_models
 from src.models.train_model_batch import train_and_predict_models
 from src.utils.submission import submission_to_csv
 
+def load_config(config_path='config.yaml'):
+    with open(config_path, 'r') as file:
+        config = yaml.safe_load(file)
+    return config
+
 def main():
     parser = argparse.ArgumentParser(description='Run project with optional MAE evaluation')
     parser.add_argument('--eval-mae', action='store_true', help='Evaluate MAE on holdout set')
     args = parser.parse_args()
+    
+    config = load_config()
 
     # 데이터 로드
     train_data, test_data , submission, _, _, _, _ = load_preprocessed_data()
 
-    # LightGBM 파라미터
-    params_lgb = {
-        'learning_rate': 0.0987683180201327,
-        'num_leaves': 436, 
-        'max_depth': 12, 
-        'min_data_in_leaf': 71, 
-        'min_child_weight': 0.001683601532174483, 
-        'feature_fraction': 0.9523508588740313, 
-        'bagging_fraction': 0.7041287547411096, 
-        'lambda_l1': 4.673609444060118, 
-        'lambda_l2': 0.001337859269238743, 
-        'min_gain_to_split': 0.0052955796204523535
-    }
-
-    # CatBoost 파라미터
-    params_cat = {
-        'iterations': 127,
-        'learning_rate': 0.0021671251498641105,
-        'depth': 11,
-        'loss_function': 'MAE',
-        'random_seed': 42,
-        'verbose': False
-    }
-
-    # XGBoost 파라미터
-    params_xgb = {
-        'objective': 'reg:squarederror',
-        'learning_rate': 0.020523230971679813,
-        'max_depth': 20,
-        'min_child_weight': 10,
-        'gamma': 4.27443753117609,
-        'subsample': 0.49335787451194985,
-        'colsample_bytree': 0.8502375640374019,
-        'seed': 42  
-    }
-
+    # 모델별 파라미터 설정
+    params_lgb = config['model_params']['lightgbm']
+    params_cat = config['model_params']['catboost']
+    params_xgb = config['model_params']['xgboost']
+   
     try:
+        
+        # duplicated data 제거
+        dup_df = train_data[train_data.drop(columns="index").duplicated()]
+        train_data = train_data.drop(index=dup_df.index)
+
         # Feature Engineering 실행
         train_processed, test_processed = feature_engineering(train_data, test_data)
         

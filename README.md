@@ -124,7 +124,7 @@ deposit_prediction
     │   ├── SLSQP.py                     # 최적 가중치 탐색용 SLSQP 함수
     │   ├── train_model_batch.py         # 실험 1의 배치 학습 전체 데이터셋  훈련 함수
     │   ├── train_model_eval.py          # 실험 1의 모델 학습 및 holdout 평가 함수
-    │   ├── train_model_eval.py          # 실험 2의 모델 학습 및 holdout 평가 함수
+    │   ├── train_model_eval_2.py          # 실험 2의 모델 학습 및 holdout 평가 함수
     ├── preprocessing
     │   ├── __init__.py
     │   ├── data_preprocessing.py
